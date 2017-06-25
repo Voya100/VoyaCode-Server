@@ -3,7 +3,7 @@ const request = require('request');
 module.exports = function(app) {
 
 	app.get('/api/test', function(req, res) {
-    res.json({test: "This is an api test"})
+    res.json({test: "This is an api test 2"})
 	});
 
   app.get('/api/blogs', function(req, res) {
