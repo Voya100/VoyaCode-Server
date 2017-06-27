@@ -32,7 +32,6 @@ function getBlog(req, res, next) {
 }
 
 function addBlog(req, res, next) {
-  
   db.none('insert into blogs(name, text)' +
       'values(${name}, ${text})',
     req.body)
