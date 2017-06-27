@@ -17,6 +17,29 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse applica
 // routes
 require('./routes.js')(app);
 
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+  app.use(function(err, req, res, next) {
+    res.status( err.code || 500 )
+    .json({
+      status: 'error',
+      message: err
+    });
+  });
+}
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500)
+  .json({
+    status: 'error',
+    message: err.message
+  });
+});
+
+
 // listen
 app.listen(port);
 console.log("App listening on port " + port);

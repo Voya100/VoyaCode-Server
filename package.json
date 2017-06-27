@@ -4,14 +4,17 @@
   "description": "Server for Voya Code",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon --watch ../public --watch ./ server.js"
   },
   "author": "Voya",
   "license": "ISC",
   "dependencies": {
+    "bluebird": "^3.5.0",
     "body-parser": "~1.5.2",
     "express": "^4.15.3",
     "morgan": "^1.2.3",
+    "pg": "^6.1.0",
+    "pg-promise": "^5.9.7",
     "request": "^2.81.0"
   }
 }
