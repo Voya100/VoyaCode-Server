@@ -10,7 +10,8 @@ var connectionData ={
   host: 'localhost',
   port: 5432,
   database: 'voyacode',
-  user: 'postgres'
+  user: 'postgres',
+  password: 'postgres'
 }
 var db = pgp(connectionData);
 
