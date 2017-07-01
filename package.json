@@ -12,6 +12,8 @@
     "bluebird": "^3.5.0",
     "body-parser": "~1.5.2",
     "express": "^4.15.3",
+    "moment": "^2.18.1",
+    "moment-timezone": "^0.5.13",
     "morgan": "^1.2.3",
     "pg": "^6.1.0",
     "pg-promise": "^5.9.7",
