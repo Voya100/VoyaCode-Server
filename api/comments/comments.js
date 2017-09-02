@@ -2,7 +2,7 @@ var db = require('../../database');
 var moment = require('moment-timezone');
 
 function getComments(req, res, next) {
-  var admin = false;
+  var admin = req.user.admin;
   var filterPrivate = admin ? '' : 'WHERE private=false';
   db.any('select id, username, message, private, post_time, update_time from comments $1^ ORDER BY id ASC', filterPrivate)
     .then(function (data) {
