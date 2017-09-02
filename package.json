@@ -18,5 +18,9 @@
     "pg": "^6.1.0",
     "pg-promise": "^5.9.7",
     "request": "^2.81.0"
+  },
+  "devDependencies": {
+    "eslint": "^4.1.1",
+    "eslint-plugin-node": "^5.1.0"
   }
 }
