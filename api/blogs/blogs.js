@@ -42,8 +42,7 @@ function addBlog(req, res, next) {
   if(req.body.secret != 'blog-secret') return next();
   parseBlogContent(req.body);
   db.none('insert into blogs(name, text)' +
-      'values(${name}, ${text})',
-    req.body)
+          'values(${name}, ${text})', req.body)
     .then(function () {
       res.status(200)
         .json({

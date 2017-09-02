@@ -54,36 +54,36 @@ function replaceTags(req, res, next){
 
   text = htmlEscape(text);
   console.log('text');
-	text = text.replace(/\n/g, "<br>");
-	text = replaceTag('b', text);
-	text = replaceTag('i', text);
-	text = replaceTag('u', text);
+  text = text.replace(/\n/g, "<br>");
+  text = replaceTag('b', text);
+  text = replaceTag('i', text);
+  text = replaceTag('u', text);
 
-	var tag = /\[url=(.*?)\](.*?)\[\/url\]/i;
-	var tagRep = '<a href="$1" target="_blank">$2</a>';
-	text = text.replace(tag, tagRep);
+  var tag = /\[url=(.*?)\](.*?)\[\/url\]/i;
+  var tagRep = '<a href="$1" target="_blank">$2</a>';
+  text = text.replace(tag, tagRep);
 
-	tag = /\[color=(.*?)\](.*?)\[\/color\]/i;
-	tagRep= '<span style="color:$1">$2</span>';
-	text = text.replace(tag, tagRep, text);
+  tag = /\[color=(.*?)\](.*?)\[\/color\]/i;
+  tagRep= '<span style="color:$1">$2</span>';
+  text = text.replace(tag, tagRep, text);
 
   req.body.username = username;
-	req.body.message = text;
+  req.body.message = text;
   console.log('tags replaced');
 }
 
 function htmlEscape(str) {
-    return str
-        .replace(/&/g, '&amp;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;');
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
 }
 
 function replaceTag(tagName, text){
   var regex = RegExp('\\[' + tagName + '\\](.*?)\\[\/' + tagName + '\\]', 'g');
-	var tagRep = '<' + tagName + '>$1</' + tagName + '>';
+  var tagRep = '<' + tagName + '>$1</' + tagName + '>';
   return text.replace(regex, tagRep);
 }
 
@@ -112,8 +112,7 @@ function postComment(req, res, next) {
     return;
   }
   db.none('insert into comments(username, message, private, post_time, update_time, ip) ' +
-      'values(${username}, ${message}, ${private}, ${post_time}, ${update_time}, ${ip})',
-    req.body)
+      'values(${username}, ${message}, ${private}, ${post_time}, ${update_time}, ${ip})', req.body)
     .then(function () {
       res.status(200).json({
         data: {

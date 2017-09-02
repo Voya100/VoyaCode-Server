@@ -22,10 +22,10 @@ require('./routes.js')(app);
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status( err.status || 500 )
-    .json({
-      status: 'error',
-      message: err
-    });
+      .json({
+        status: 'error',
+        message: err
+      });
   });
 }
 
@@ -33,10 +33,10 @@ if (app.get('env') === 'development') {
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500)
-  .json({
-    status: err.status || 500,
-    message: err.message || err
-  });
+    .json({
+      status: err.status || 500,
+      message: err.message || err
+    });
 });
 
 
