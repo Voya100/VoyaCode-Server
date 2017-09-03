@@ -13,14 +13,13 @@ function initializeUser(req, res, next){
   if (!(req.headers && req.headers.authorization)) {
     return next();
   }
-  var header = req.headers.authorization.split(' ');
-  var token = header[1];
+  const header = req.headers.authorization.split(' ');
+  const token = header[1];
   auth.decodeToken(token, (err, payload) => {
     if (!err) {
       req.user = payload;
-      console.log('authenticated, setting payload', payload)
-      next();
     }
+    next();
   });
 }
 
