@@ -8,26 +8,24 @@ function getComments(req, res, next) {
   var filterPrivate = admin ? '' : 'WHERE private=false';
   db.any('select id, username, message, private, post_time, update_time from comments $1^ ORDER BY id ASC', filterPrivate)
     .then(function (data) {
-      data = data.map(comment => {
-        comment.post_time = moment.unix(comment.post_time).tz('Europe/Helsinki').format('DD.MM.YYYY HH:mm');
-        comment.update_time = moment.unix(comment.update_time).tz('Europe/Helsinki').format('DD.MM.YYYY HH:mm');
-        return comment;
-      })
+      
+      data.forEach(formatCommentResponse)
   
-      res.status(200)
-        .json({
-          data: data
-        });
+      res.status(200).json({data});
     })
-    .catch(function (err) {
-      return next(err);
-    });
+    .catch(next);
+}
+
+function formatCommentResponse(comment){
+  comment.post_time = formatter.formatDateTime(comment.post_time);
+  comment.update_time = formatter.formatDateTime(comment.update_time);
+  comment.message = formatter.tagsToHtml(comment.message);
 }
 
 function commentMessageValidator(req, res, next){
   validateUsername(req, res, next);
   validateMessage(req, res, next);
-  replaceTags(req, res, next);
+  escapeComment(req, res, next);
   next();
 }
 
@@ -48,20 +46,17 @@ function validateMessage(req, res, next){
   }
 }
 
-function replaceTags(req, res, next){
+function escapeComment(req, res, next){
   var username = req.body.username.trim();
   var text = req.body.message.trim();
 
   username = formatter.escapeHtml(username);
 
   text = formatter.escapeHtml(text);
-  text = formatter.tagsToHtml(text);
 
   req.body.username = username;
   req.body.message = text;
 }
-
-
 
 function postComment(req, res, next) {
 
@@ -71,36 +66,30 @@ function postComment(req, res, next) {
 
   req.body.post_time = timestamp;
   req.body.update_time = timestamp;
-  console.log(dateTime, timestamp);
+
   req.body.ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.socket.remoteAddress || req.connection.socket.remoteAddress;
+
+  const comment = {
+    username: req.body.username,
+    message: req.body.message,
+    private: parseInt(req.body.private),
+    post_time: dateTime,
+    update_time: dateTime
+  }
+  formatCommentResponse(comment);
+
   if(!!req.body.preview){
-    res.status(200).json({
-      data: {
-        username: req.body.username,
-        message: req.body.message,
-        private: parseInt(req.body.private),
-        post_time: dateTime,
-        update_time: dateTime
-      }
-    });
+    res.status(200).json({ data: comment });
     return;
   }
   db.none('insert into comments(username, message, private, post_time, update_time, ip) ' +
       'values(${username}, ${message}, ${private}, ${post_time}, ${update_time}, ${ip})', req.body)
     .then(function () {
       res.status(200).json({
-        data: {
-          username: req.body.username,
-          message: req.body.message,
-          private: parseInt(req.body.private),
-          post_time: dateTime,
-          update_time: dateTime
-        }
+        data: comment
       });
     })
-    .catch(function (err) {
-      return next(err);
-    });
+    .catch(next);
 }
 
 function editComment(req, res, next) {
@@ -112,9 +101,7 @@ function editComment(req, res, next) {
           status: 'success'
         });
     })
-    .catch(function (err) {
-      return next(err);
-    });
+    .catch(next);
 }
 
 module.exports = {
