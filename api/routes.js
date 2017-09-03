@@ -10,6 +10,7 @@ router.get('/check-login', auth.checkLogin);
 
 router.get('/blogs', blogs.getBlogs);
 router.post('/blogs', auth.adminAuth, blogs.addBlog);
+router.get('/blogs/preview', blogs.previewBlog);
 router.get('/blogs/:id', blogs.getBlog);
 router.put('/blogs/:id', auth.adminAuth, blogs.updateBlog);
 router.delete('/blogs:id', auth.adminAuth, blogs.deleteBlog);

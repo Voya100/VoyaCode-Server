@@ -39,7 +39,6 @@ function parseBlogData(data){
 }
 
 function addBlog(req, res, next) {
-  if(req.body.secret != 'blog-secret') return next();
   parseBlogContent(req.body);
   db.none('insert into blogs(name, text)' +
           'values(${name}, ${text})', req.body)
@@ -69,17 +68,20 @@ function updateBlog(req, res, next) {
           status: 'success'
         });
     })
-    .catch(function (err) {
-      return next(err);
-    });
+    .catch(next);
 }
 
 function deleteBlog(req, res, next){
   db.none('delete from blogs where id=$1', [req.params.id]).then(function(){
     res.status(200).json({status: 'success'});
-  }).catch(function(err){
-    return next(err);
-  });
+  }).catch(next);
+}
+
+function previewBlog(req, res, next){
+  var blog = {name: req.body, text: req.body, id: req.body.id || 1, date: new Date()};
+  parseBlogContent(blog);
+  parseBlogData(blog);
+  res.status(200).json(blog);
 }
 
 module.exports = {
@@ -87,5 +89,6 @@ module.exports = {
   getBlog,
   addBlog,
   updateBlog,
-  deleteBlog
+  deleteBlog,
+  previewBlog
 };
