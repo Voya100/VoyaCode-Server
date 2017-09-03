@@ -74,9 +74,18 @@ function updateBlog(req, res, next) {
     });
 }
 
+function deleteBlog(req, res, next){
+  db.none('delete from blogs where id=$1', [req.params.id]).then(function(){
+    res.status(200).json({status: 'success'});
+  }).catch(function(err){
+    return next(err);
+  });
+}
+
 module.exports = {
-  getBlogs: getBlogs,
-  getBlog: getBlog,
-  addBlog: addBlog,
-  updateBlog: updateBlog
+  getBlogs,
+  getBlog,
+  addBlog,
+  updateBlog,
+  deleteBlog
 };
