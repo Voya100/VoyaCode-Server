@@ -60,7 +60,6 @@ function parseBlogContent(data){
 }
 
 function updateBlog(req, res, next) {
-  if(req.body.secret != 'blog-secret') return next();
   parseBlogContent(req.body);
   db.none('update blogs set name=$1, text=$2 where id=$3',
     [req.body.name, req.body.text, parseInt(req.params.id)])
