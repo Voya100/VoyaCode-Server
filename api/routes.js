@@ -6,6 +6,7 @@ const blogs = require('./blogs/blogs');
 const comments = require('./comments/comments');
 
 router.post('/login', auth.login);
+router.get('/check-login', auth.checkLogin);
 
 router.get('/blogs', blogs.getBlogs);
 router.post('/blogs', auth.adminAuth, blogs.addBlog);
