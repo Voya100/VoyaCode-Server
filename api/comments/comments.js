@@ -17,19 +17,23 @@ function getComments(req, res, next) {
 }
 
 function formatCommentResponse(comment){
-  comment.post_time = formatter.formatDateTime(comment.post_time);
-  comment.update_time = formatter.formatDateTime(comment.update_time);
+  comment.post_time = formatter.formatDateTime(new Date(comment.post_time*1000));
+  comment.update_time = formatter.formatDateTime(new Date(comment.update_time*1000));
   comment.message = formatter.tagsToHtml(comment.message);
 }
 
 function commentMessageValidator(req, res, next){
-  validateUsername(req, res, next);
-  validateMessage(req, res, next);
-  escapeComment(req, res, next);
-  next();
+  var error;
+  var setError = (err) => {error = err};
+  validateMessage(req, res, setError);
+  validateUsername(req, res, setError);
+  escapeComment(req, res);
+  
+  next(error);
 }
 
 var forbiddenUsernames = ['voya', 'admin'];
+
 function validateUsername(req, res, next){
   var name = req.body.username.toLowerCase();
   if(forbiddenUsernames.indexOf(name) != -1){
@@ -60,9 +64,7 @@ function escapeComment(req, res, next){
 
 function postComment(req, res, next) {
 
-  const date = moment();
-  const timestamp = date.unix();
-  const dateTime = formatter.formatDateTime(date);
+  const timestamp = moment().unix();
 
   req.body.post_time = timestamp;
   req.body.update_time = timestamp;
@@ -73,8 +75,8 @@ function postComment(req, res, next) {
     username: req.body.username,
     message: req.body.message,
     private: parseInt(req.body.private),
-    post_time: dateTime,
-    update_time: dateTime
+    post_time: req.body.post_time,
+    update_time: req.body.update_time
   }
   formatCommentResponse(comment);
 
