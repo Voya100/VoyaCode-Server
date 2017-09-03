@@ -1,5 +1,7 @@
-var db = require('../../database');
-var moment = require('moment-timezone');
+const db = require('../../database');
+const moment = require('moment-timezone');
+
+const formatter = require('../shared/formatter.service');
 
 function getComments(req, res, next) {
   var admin = req.user.admin;
@@ -50,50 +52,22 @@ function replaceTags(req, res, next){
   var username = req.body.username.trim();
   var text = req.body.message.trim();
 
-  username = htmlEscape(username);
+  username = formatter.escapeHtml(username);
 
-  text = htmlEscape(text);
-  console.log('text');
-  text = text.replace(/\n/g, "<br>");
-  text = replaceTag('b', text);
-  text = replaceTag('i', text);
-  text = replaceTag('u', text);
-
-  var tag = /\[url=(.*?)\](.*?)\[\/url\]/i;
-  var tagRep = '<a href="$1" target="_blank">$2</a>';
-  text = text.replace(tag, tagRep);
-
-  tag = /\[color=(.*?)\](.*?)\[\/color\]/i;
-  tagRep= '<span style="color:$1">$2</span>';
-  text = text.replace(tag, tagRep, text);
+  text = formatter.escapeHtml(text);
+  text = formatter.tagsToHtml(text);
 
   req.body.username = username;
   req.body.message = text;
-  console.log('tags replaced');
 }
 
-function htmlEscape(str) {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
-
-function replaceTag(tagName, text){
-  var regex = RegExp('\\[' + tagName + '\\](.*?)\\[\/' + tagName + '\\]', 'g');
-  var tagRep = '<' + tagName + '>$1</' + tagName + '>';
-  return text.replace(regex, tagRep);
-}
 
 
 function postComment(req, res, next) {
 
-  var dateTime = moment().tz('Europe/Helsinki');
-  var timestamp = dateTime.unix();
-
-  dateTime = dateTime.format('DD.MM.YYYY HH:mm');
+  const date = moment();
+  const timestamp = date.unix();
+  const dateTime = formatter.formatDateTime(date);
 
   req.body.post_time = timestamp;
   req.body.update_time = timestamp;
