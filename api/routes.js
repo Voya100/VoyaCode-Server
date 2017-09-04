@@ -13,7 +13,7 @@ router.post('/blogs', auth.adminAuth, blogs.addBlog);
 router.post('/blogs/preview', blogs.previewBlog);
 router.get('/blogs/:id', blogs.getBlog);
 router.put('/blogs/:id', auth.adminAuth, blogs.updateBlog);
-router.delete('/blogs:id', auth.adminAuth, blogs.deleteBlog);
+router.delete('/blogs/:id', auth.adminAuth, blogs.deleteBlog);
 router.get('/blogs/raw/:id', blogs.getRawBlog);
 
 router.get('/test', function(req, res) {
