@@ -35,6 +35,7 @@ function commentMessageValidator(req, res, next){
 var forbiddenUsernames = ['voya', 'admin'];
 
 function validateUsername(req, res, next){
+  if(req.user.admin){ return; }
   var name = req.body.username.toLowerCase();
   if(forbiddenUsernames.indexOf(name) != -1){
     return next({status: 400, message: "Username is forbidden, use another."})
