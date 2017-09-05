@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const auth = require('./auth/auth.controller');
-const blogs = require('./blogs/blogs');
+const blogs = require('./blogs/blogs.controller');
 const comments = require('./comments/comments');
 
 router.post('/login', auth.login);
