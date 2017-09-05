@@ -28,9 +28,11 @@
     "moment": "^2.18.1",
     "moment-timezone": "^0.5.13",
     "morgan": "^1.2.3",
+    "node-cache": "^4.1.1",
     "pg": "^6.1.0",
     "pg-promise": "^5.9.7",
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "rss": "^1.2.2"
   },
   "devDependencies": {
     "cross-env": "^5.0.5",

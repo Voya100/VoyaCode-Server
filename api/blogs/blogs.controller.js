@@ -9,6 +9,7 @@ module.exports = {
 };
 
 const blogService = require('./blogs.service');
+const rssService = require('../rss/rss.service');
 
 function getBlogs(req, res, next) {
   const limit = +req.query.limit;
@@ -38,6 +39,7 @@ function addBlog(req, res, next) {
   }
 
   blogService.addBlog(req.body.name, req.body.text).then(function () {
+    rssService.refreshBlogRss();
     res.status(200).json({ status: 'success' });
   })
   .catch(next);
@@ -49,6 +51,7 @@ function updateBlog(req, res, next) {
   }
 
   blogService.updateBlog(+req.params.id, req.body.name, req.body.text).then(function () {
+    rssService.refreshBlogRss();
     res.status(200).json({ status: 'success' });
   })
   .catch(next);
@@ -56,6 +59,7 @@ function updateBlog(req, res, next) {
 
 function deleteBlog(req, res, next){
   blogService.deleteBlog(req.params.id).then(function(){
+    rssService.refreshBlogRss();
     res.status(200).json({ status: 'success' });
   })
   .catch(next);
