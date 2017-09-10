@@ -4,6 +4,7 @@ const router = express.Router();
 const auth = require('./auth/auth.controller');
 const blogs = require('./blogs/blogs.controller');
 const comments = require('./comments/comments');
+const email = require('./email/email.controller');
 
 router.post('/login', auth.login);
 router.get('/check-login', auth.checkLogin);
@@ -15,6 +16,10 @@ router.get('/blogs/:id', blogs.getBlog);
 router.put('/blogs/:id', auth.adminAuth, blogs.updateBlog);
 router.delete('/blogs/:id', auth.adminAuth, blogs.deleteBlog);
 router.get('/blogs/raw/:id', blogs.getRawBlog);
+
+router.post('/blogs/subscribe', email.emailCheck, email.sendSubscribeConfirmation);
+router.post('/blogs/subscribe/:email', email.emailCheck, email.subscribeToNewsletter);
+router.post('/blogs/unsubscribe/:email', email.emailCheck, email.unsubscribeFromNewsletter);
 
 router.get('/test', function(req, res) {
   res.json({test: "This is an api test 3"})

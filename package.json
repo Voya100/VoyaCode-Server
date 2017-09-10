@@ -24,6 +24,8 @@
     "express": "^4.15.3",
     "istanbul": "^0.4.5",
     "jsonwebtoken": "^7.4.3",
+    "lodash": "^4.17.4",
+    "mailgun-js": "^0.13.1",
     "mocha": "^2.5.3",
     "moment": "^2.18.1",
     "moment-timezone": "^0.5.13",
@@ -32,7 +34,8 @@
     "pg": "^6.1.0",
     "pg-promise": "^5.9.7",
     "request": "^2.81.0",
-    "rss": "^1.2.2"
+    "rss": "^1.2.2",
+    "url-crypt": "^1.2.1"
   },
   "devDependencies": {
     "cross-env": "^5.0.5",

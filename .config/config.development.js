@@ -21,4 +21,11 @@ config.users = {
   }
 }
 
+config.mailgun = {
+  apiKey: 'fake-key',
+  domain: 'voyacode.com'
+}
+
+config.encryptPassword = 'h=H85Z$A<PJd[]Zx?=emj=J_Wa.7"QQ5WFAZ)LQ{MPU';
+
 module.exports = config;
