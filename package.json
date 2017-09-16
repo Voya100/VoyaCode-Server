@@ -4,7 +4,8 @@
   "description": "Server for Voya Code",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon --watch ../public --watch ./ server.js --watch ./.config",
+    "start": "set PORT=8000 && concurrently \"nodemon --watch ./ server.js --watch ./.config\" \"npm run open-browser\" ",
+    "open-browser": "browser-sync start --proxy http://localhost:8000 --reload-delay 200 --browser \"chrome\" --files ../public/index.html",
     "test": "cross-env NODE_ENV=test && mocha ./api/**/*.spec.js",
     "test-cover": "istanbul cover _mocha $(find \"*.spec.js\" -not -path \"./node_modules/*\")"
   },
@@ -38,6 +39,7 @@
     "url-crypt": "^1.2.1"
   },
   "devDependencies": {
+    "browser-sync": "^2.18.13",
     "cross-env": "^5.0.5",
     "eslint": "^4.6.0",
     "eslint-plugin-mocha": "^4.11.0",
