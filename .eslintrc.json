@@ -15,5 +15,9 @@
     "no-extra-boolean-cast": "off",
     "no-unused-vars": ["error", {"args": "none"}],
     "node/exports-style": ["error", "module.exports"]
+  },
+  "globals": {
+    "expect": true,
+    "chai": true
   }
 }

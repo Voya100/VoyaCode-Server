@@ -1,6 +1,3 @@
-const chai = require('chai');
-const expect = chai.expect;
-
 const auth = require('./auth.service');
 const config = require('../../.config/config');
 

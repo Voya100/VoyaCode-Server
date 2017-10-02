@@ -1,0 +1,3 @@
+./api/**/*.spec.js ./websocket/**/*.spec.js
+--require ./test/common.js
+--recursive
