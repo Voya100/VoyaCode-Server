@@ -14,13 +14,14 @@ module.exports = class Pawn extends Piece{
   get enPassantRound(){ return this.state.enPassantRound }
   set enPassantRound(round){ this.state.enPassantRound = round }
 
-  hasMoved(){ return this.state.hasMoved }
+  get hasMoved(){ return this.state.hasMoved }
+  set hasMoved(hasMoved){ this.state.hasMoved = hasMoved }
 
   // Sets moveTiles and hitTiles
   tileCheck(){
     this.clearTiles();
     this.checkVerticalTile(1);
-    if(this.yStart == this.y){
+    if(!this.hasMoved){
       this.checkVerticalTile(2);
     }
     this.checkDiagonalTile(1);
@@ -68,17 +69,18 @@ module.exports = class Pawn extends Piece{
     this.setEnPassantability(y);
     this.tryToDoEnPassant(x,y);
     super.move(x, y);
+    this.hasMoved = true;
     // Promotion
-    if((y == 0 || y == 7) && this.hasMoved()){
-      this.state.type = 'Queen';
-      this.game.removePiece(this);
-      this.game.addPiece(this.id);
+    if((y == 0 || y == 7) && this.hasMoved){
+      this.game.removePiece(this.id);
+      this.game.createPiece({type: 'queen', x, y, owner: this.color});
     }
   }
 
   // Tries to do en passant kill when moved to tile in x, y
   tryToDoEnPassant(x, y){
     let tile = this.board[y][x];
+
     // En passant if movement is diagonal and target tile is empty
     if(x !== this.x && tile.isEmpty){
       this.board[y-this.yDir][x].piece.die();
@@ -88,7 +90,7 @@ module.exports = class Pawn extends Piece{
   // If piece moved 2 tiles, sets enPassantRound to the current round
   setEnPassantability(y){
     if(Math.abs(this.y - y) == 2){
-      this.enPassantRound = this.game.state.round;
+      this.enPassantRound = this.game.state.round + (this.isWhite() ? 0 : 1);
     }
   }
 

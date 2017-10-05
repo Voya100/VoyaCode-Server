@@ -24,6 +24,7 @@ class Piece{
   get y(){ return this.state.y }
   get board(){ return this.game.board }
   get tile(){ return this.board[this.y][this.x] }
+  set tile(tile){ this.state.x = tile.x; this.state.y = tile.y; }
   
   protectsPiece(piece){ return this.tile.protectsTile(piece.tile) }
 
@@ -41,7 +42,7 @@ class Piece{
   move(x, y){
     this.tile.piece = null;
     this.tile = this.game.board[y][x];
-    if(!this.tile.empty()){
+    if(!this.tile.isEmpty){
       this.tile.piece.die();
     }
     this.tile.setPiece(this);

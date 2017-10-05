@@ -28,7 +28,6 @@ class Tile {
   }
 
   setPiece(piece){
-    console.log('set piece', this.x, this.y, piece);
     this.piece = piece;
   }
 
@@ -38,7 +37,7 @@ class Tile {
 
   // Adds a piece that can move to this tile
   addMover(piece){
-    if(piece.white){
+    if(piece.isWhite()){
       this.whites.push(piece);
     }else{
       this.blacks.push(piece);
@@ -46,7 +45,7 @@ class Tile {
   }
   // Adds a piece that could hit this tile (if there is an enemy)
   addHitter(piece){
-    if(piece.white){
+    if(piece.isWhite()){
       this.whiteHits.push(piece);
     }else{
       this.blackHits.push(piece);
