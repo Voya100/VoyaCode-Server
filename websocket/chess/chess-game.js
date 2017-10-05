@@ -38,6 +38,8 @@ class ChessGame {
     this.latestMove = null;
   }
 
+  get activePlayer(){return this.state.activePlayer === 'white' ? this.whitePlayer : this.blackPlayer}
+
   newGame(row6, row7, roundLimit){
     this.idCounter = 0;
 
@@ -108,7 +110,7 @@ class ChessGame {
     const target = this.board[y][x];
     
     if(piece.color !== this.state.activePlayer){
-      throw new Error('It isn\'t your turn yet.');
+      throw new Error('not-your-turn');
     }
 
     const move = {xStart: piece.x, yStart: piece.y, pieceType: piece.type, target: target.piece && target.piece.type};
@@ -116,17 +118,17 @@ class ChessGame {
     this.movePiece(id, x, y);
     this.latestMove = move;
 
-    // TODO: victory check
+    this.changeTurn();
     this.checkIfGameHasEnded();
 
-    this.changeTurn();
+    return move;
   }
 
   movePiece(id, x, y){
     const piece = this.pieces[id];
     const target = this.board[y][x];
     if(!piece.canMove(target)){
-      throw new Error('Invalid move');
+      throw new Error('invalid-move');
     }
     piece.move(x, y);
   }
@@ -164,18 +166,13 @@ class ChessGame {
   }
 
   checkIfGameHasEnded(){
-    // TODO
-    return false;
-  }
-
-  checkWinner(){
-    // TODO
-    return null;
-  }
-
-  isInCheck(){
-    // TODO
-    return false;
+    if(this.state.round > this.state.roundLimit){
+      this.state.winner = 'tie';
+    }else if(this.activePlayer.possibleMoves.length === 0){
+      this.state.winner = this.activePlayer === 'white' ? 'black' : 'white';
+    }else if(this.kingCount && this.activePlayer.kingCount === 0){
+      this.state.winner = this.activePlayer === 'white' ? 'black' : 'white';
+    }
   }
 
   getLatestMove(){

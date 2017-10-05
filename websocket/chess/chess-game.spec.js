@@ -1,7 +1,7 @@
 const ChessGame = require('./chess-game');
 const Tile = require('./tile');
 
-const { getBoardLayout, setBoard } = require('./test-helpers');
+const { getBoardLayout } = require('./test-helpers');
 
 describe('#ChessGame', function(){
 
