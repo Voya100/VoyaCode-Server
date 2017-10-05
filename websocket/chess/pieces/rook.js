@@ -4,7 +4,6 @@ module.exports = class Rook extends Piece{
 
   constructor(state, game){
     super("rook", state, game);
-    this.value = 5;
     state.hasMoved = false;
   }
 
