@@ -1,7 +1,8 @@
 module.exports = {
   getBoardLayout,
   setBoard,
-  testMoveTiles
+  testMoveTiles,
+  compareMoves
 }
 
 const ChessGame = require('./chess-game');
@@ -55,6 +56,10 @@ function testMoveTiles(x, y, board, moveTileBoard=board){
   const game = new ChessGame();
   setBoard(game, board);
   game.doTileChecks();
+  compareMoves(x, y, game, moveTileBoard);
+}
+
+function compareMoves(x,y, game, moveTileBoard){
   const tiles = [];
   moveTileBoard.forEach((row, j) => {
     row.forEach((tile, i) => {
@@ -63,7 +68,7 @@ function testMoveTiles(x, y, board, moveTileBoard=board){
       }
     })
   });
-  const piece = game.board[y][x].piece;
+  const piece = game.getPiece(x,y);
   const moveTiles = piece.moveTiles.map((tile) => '(x: ' + tile.x + ', y: ' + tile.y + ')');
 
   expect(moveTiles.sort()).to.deep.equal(tiles.sort());
