@@ -1,6 +1,9 @@
 const Piece= require('./piece');
 const Tile= require('../tile');
 
+// TODO: Move this check to tile implementation
+const enemyColor = {white: 'black', black: 'white'}
+
 module.exports = class King extends Piece{
 
   constructor(state, game){
@@ -22,11 +25,11 @@ module.exports = class King extends Piece{
   // Moves rook to the correct tile as in castling special move
   // x and y: coordinates the king tries tries to move to
   castling(x, y){
-    let targetTile = this.tiles[y][x];
+    let targetTile = this.board[y][x];
     let kingDir = x < this.x ? -1 : 1;
     let tilesInRooksDirection = targetTile.checkDirection(kingDir,0,8);
     let rookTile = tilesInRooksDirection[tilesInRooksDirection.length-1];
-    if(rookTile.empty || rookTile.piece.type !== 'rook'){
+    if(rookTile.isEmpty || rookTile.piece.type !== 'rook'){
       throw new Error('Invalid castling call');
     }else{
       rookTile.piece.move(x-kingDir, y, false);
@@ -58,14 +61,14 @@ module.exports = class King extends Piece{
   }
 
   canDoCastlingWithRook(rook, target){
-    if(rook.hasMoved || rook.y != this.y || target == null){
+    if(rook.hasMoved || rook.y !== this.y || target === null){
       return false;
     }
     let tilesBetween = target.tilesBetween(this.tile);
     tilesBetween.push(target);
-    let tilesWithPieces = tilesBetween.filter((tile) => !tile.empty);
-    let dangerTiles = tilesBetween.filter((tile) => tile[this.player.enemy.color + "Hits"].length != 0);
-    if(tilesWithPieces.length != 0 || dangerTiles.length != 0){
+    let tilesWithPieces = tilesBetween.filter((tile) => !tile.isEmpty);
+    let dangerTiles = tilesBetween.filter((tile) => tile[enemyColor[this.color] + "Hits"].length !== 0);
+    if(tilesWithPieces.length !== 0 || dangerTiles.length !== 0){
       return false;
     }
     return true;
@@ -77,7 +80,7 @@ module.exports = class King extends Piece{
     if(!Tile.tileExists(x,this.y)){
       return null;
     }else{
-      return this.tiles[this.y][x]
+      return this.board[this.y][x]
     }
   }
 
