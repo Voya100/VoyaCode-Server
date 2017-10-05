@@ -19,24 +19,24 @@ class Player {
     return this.kings.length;
   }
 
-  get isInCheck(){
-    if(this.kingCount !== 0){
+  isInCheck(){
+    if(this.kingCount === 0){
       return false;
     }
 
     const king = this.kings[0];
-    return king.threats().length;
+    return !!king.threats().length;
   }
 
-  get isInCheckMate(){
+  isInCheckMate(){
     return this.isInCheck() && this.safeKingMoves(this.kings[0]).length === 0;
   }
 
   get possibleMoves(){
-    if(!this.isInCheck){
+    if(!this.isInCheck()){
       return this.allMoves;
     }else{
-      return this.saveKingMoves(this.kings[0]);
+      return this.safeKingMoves(this.kings[0]);
     }
 
   }
@@ -45,7 +45,7 @@ class Player {
     const moves = [];
     // Note: Moves may not be safe for the king
     this.pieces.forEach((piece) => {
-      piece.moveTiles((tile) => {
+      piece.moveTiles.forEach((tile) => {
         moves.push({piece, tile});
       });
     });
@@ -61,7 +61,7 @@ class Player {
     });
 
     const kingDodgeMoves = kingTiles.map((tile) => ({piece: king, tile}));
-    if(threats.length > 1){return kingDodgeMoves; }
+    if(threats.length > 1 || threats.length === 0){return kingDodgeMoves; }
 
     const threat = threats[0];
     const threatKillMoves = this.threatKillMoves(threat, king);
@@ -85,7 +85,7 @@ class Player {
     const tilesBetween = king.tile.tilesBetween(threat.tile);
 
     for(let tile of tilesBetween){
-      const pieces = tile[this.colors].filter((piece) => {
+      const pieces = tile[this.color + 'Hits'].filter((piece) => {
         return !piece.protectsKing && piece !== king;
       });
       for(let piece of pieces){
