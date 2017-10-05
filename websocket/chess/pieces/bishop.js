@@ -10,7 +10,6 @@ module.exports = class Bishop extends Piece{
   tileCheck(){
     this.clearTiles();
     this.moveTiles = this.moveTiles.concat(this.checkDirections(1,1,8,true));
-    console.log('bishop movetiles', this.moveTiles);
     this.addTiles();
   }
 }
