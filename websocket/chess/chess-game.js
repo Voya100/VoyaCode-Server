@@ -35,6 +35,7 @@ class ChessGame {
     this.whitePlayer = null;
     this.blackPlayer = null;
     this.idCounter = 0;
+    this.latestMove = null;
   }
 
   newGame(row6, row7, roundLimit){
@@ -80,6 +81,7 @@ class ChessGame {
     for(let id in state.pieces){
       this.createPiece(state.pieces[id]);
     }
+    this.doTileChecks();
   }
 
   initBoard(){
@@ -87,6 +89,9 @@ class ChessGame {
   }
 
   createPiece(pieceState){
+    if(pieceState.id === undefined){
+      pieceState.id = this.idCounter++;
+    }
     const type = pieceState.type;
     const PieceClass = pieceTypes[type];
     if(PieceClass == undefined){
@@ -99,11 +104,22 @@ class ChessGame {
   }
 
   makeMove({id, x, y}){
-    if(this.pieces[id].color !== this.state.activePlayer){
+    const piece = this.pieces[id];
+    const target = this.board[y][x];
+    
+    if(piece.color !== this.state.activePlayer){
       throw new Error('It isn\'t your turn yet.');
     }
+
+    const move = {xStart: piece.x, yStart: piece.y, pieceType: piece.type, target: target.piece && target.piece.type};
+
     this.movePiece(id, x, y);
-    this.checkWinningCondition
+    this.latestMove = move;
+
+    // TODO: victory check
+    this.checkIfGameHasEnded();
+
+    this.changeTurn();
   }
 
   movePiece(id, x, y){
@@ -112,7 +128,19 @@ class ChessGame {
     if(!piece.canMove(target)){
       throw new Error('Invalid move');
     }
-    piece.move(target);
+    piece.move(x, y);
+  }
+
+  changeTurn(){
+    this.state.activePlayer = this.state.activePlayer === 'white' ? 'black' : 'white';
+    if(this.state.activePlayer === 'white'){
+      this.state.round++;
+    }
+    this.doTileChecks();
+  }
+
+  getPiece(x, y){
+    return this.board[y][x].piece;
   }
 
   removePiece(id){
@@ -135,6 +163,11 @@ class ChessGame {
     this.board.forEach((row) => row.forEach((tile) => tile.clear()));
   }
 
+  checkIfGameHasEnded(){
+    // TODO
+    return false;
+  }
+
   checkWinner(){
     // TODO
     return null;
@@ -143,6 +176,10 @@ class ChessGame {
   isInCheck(){
     // TODO
     return false;
+  }
+
+  getLatestMove(){
+    return this.latestMove;
   }
 
 }
