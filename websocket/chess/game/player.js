@@ -1,7 +1,5 @@
 const _ = require('lodash');
 
-const oppositeColor = (color) => color === 'white' ? 'black' : 'white';
-
 class Player {
 
   constructor(color){
@@ -23,9 +21,8 @@ class Player {
     if(this.kingCount === 0){
       return false;
     }
-
     const king = this.kings[0];
-    return !!king.threats().length;
+    return !!king.threats.length;
   }
 
   isInCheckMate(){
@@ -53,9 +50,9 @@ class Player {
   }
 
   safeKingMoves(king){
-    const threats = king.threats();
+    const threats = king.threats;
     const kingTiles = king.moveTiles.filter((tile) => {
-      return tile[oppositeColor(this.color)+'Hits'].length === 0 && _.every(threats, (threat) => {
+      return tile.getThreatHits(this.color).length === 0 && _.every(threats, (threat) => {
         return !king.tile.isBetween(tile, threat.tile);
       });
     });
@@ -72,8 +69,8 @@ class Player {
 
   // Moves that can be used to kill threat, without leaving the king vulnerable
   threatKillMoves(threat, king){
-    const movePieces = threat.threats().filter((piece) => !piece.protectsPiece(king) || piece.tile.isBetween(king.tile, threat.tile));
-    return movePieces.map((piece) => {piece, threat.tile});
+    const movePieces = threat.threats.filter((piece) => !piece.protectsPiece(king) || piece.tile.isBetween(king.tile, threat.tile));
+    return movePieces.map((piece) => ({piece, tile: threat.tile}));
   }
 
   // Moves that can be used to block a threat, without leaving king vulnerable
@@ -86,7 +83,7 @@ class Player {
 
     for(let tile of tilesBetween){
       const pieces = tile[this.color + 'Hits'].filter((piece) => {
-        return !piece.protectsKing && piece !== king;
+        return !piece.protectsPiece(king) && piece !== king;
       });
       for(let piece of pieces){
         moves.push({piece, tile});

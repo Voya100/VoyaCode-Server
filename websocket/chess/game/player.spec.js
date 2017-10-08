@@ -116,7 +116,7 @@ describe('#Player', function(){
         [' ' ,' ' ,'BR','WB','WX',' ' ,' ' ,' ' ]
       ])
       const player = game.whitePlayer;
-      expect(player.isInCheckMate()).to.be.false;
+      expect(player.isInCheckMate()).to.be.true;
     });
     
     it('should be in check mate when threat can be eliminated, but elimination would leave king vulnerable', function(){

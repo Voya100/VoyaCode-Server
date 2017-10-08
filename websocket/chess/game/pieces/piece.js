@@ -14,7 +14,6 @@ class Piece{
     this.game = game;
     this.moveTiles = []; 
     this.hitTiles = []; 
-    this.protectsKing = false;
     this.dead = false;
     this.type = type;
   }
@@ -26,7 +25,7 @@ class Piece{
   get tile(){ return this.board[this.y][this.x] }
   set tile(tile){ this.state.x = tile.x; this.state.y = tile.y; }
   
-  protectsPiece(piece){ return this.tile.protectsTile(piece.tile) }
+  protectsPiece(piece){ return this.tile.protectsTile(piece.tile, this) }
 
   isWhite(){ return this.color === 'white' }
 
@@ -35,9 +34,9 @@ class Piece{
   tileCheck(){}
 
   // Returns friendlies which can move to the tile after death	
-  friends(){return this.tile[this.color + "Hits"]}
+  get friends(){ return this.tile.getFriendHits(this.color) }
   // Returns enemies that can hit the next turn
-  threats(){return this.tile[oppositeColor[this.color] + "Hits"]}
+  get threats(){ return this.tile.getThreatHits(this.color) }
     
   move(x, y){
     this.tile.piece = null;

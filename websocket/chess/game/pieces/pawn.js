@@ -36,7 +36,7 @@ module.exports = class Pawn extends Piece{
       return;
     }
     let tile = this.board[y][this.x];
-    if(tile.isEmpty && tile.tilesBetween(this.tile).filter((tile) => !tile.isEmpty).length == 0){
+    if(tile.isEmpty() && tile.tilesBetween(this.tile).filter((tile) => !tile.isEmpty()).length == 0){
       this.moveTiles.push(tile);
     }
   }
@@ -73,14 +73,13 @@ module.exports = class Pawn extends Piece{
     // Promotion
     if((y == 0 || y == 7) && this.hasMoved){
       this.game.removePiece(this.id);
-      this.game.createPiece({type: 'queen', x, y, owner: this.color});
+      this.game.addPiece({type: 'queen', x, y, owner: this.color});
     }
   }
 
   // Tries to do en passant kill when moved to tile in x, y
   tryToDoEnPassant(x, y){
     let tile = this.board[y][x];
-
     // En passant if movement is diagonal and target tile is empty
     if(x !== this.x && tile.isEmpty){
       this.board[y-this.yDir][x].piece.die();

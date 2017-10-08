@@ -10,21 +10,21 @@ const Queen= require('./pieces/queen');
 const Rook= require('./pieces/rook');
 
 const pieceTypes = {
-  "bishop": Bishop,
-  "king": King,
-  "knight": Knight,
-  "pawn": Pawn,
-  "queen": Queen,
-  "rook": Rook
+  bishop: Bishop,
+  king: King,
+  knight: Knight,
+  pawn: Pawn,
+  queen: Queen,
+  rook: Rook
 }
 
 const minPieceTypes = {
-  "B": "bishop",
-  "X": "king",
-  "K": "knight",
-  "P": "pawn",
-  "Q": "queen",
-  "R": "rook"
+  B: "bishop",
+  X: "king",
+  K: "knight",
+  P: "pawn",
+  Q: "queen",
+  R: "rook"
 }
 
 class ChessGame {
@@ -38,7 +38,8 @@ class ChessGame {
     this.latestMove = null;
   }
 
-  get activePlayer(){return this.state.activePlayer === 'white' ? this.whitePlayer : this.blackPlayer}
+  get activePlayer(){ return this.state.activePlayer === 'white' ? this.whitePlayer : this.blackPlayer }
+  get kingCount(){ return this.state.kingCount }
 
   newGame(row6, row7, roundLimit){
     this.idCounter = 0;
@@ -61,11 +62,11 @@ class ChessGame {
     for(let i = 0; i < 8; i++){
       const row6Type = row6[i];
       const row7Type = row7[i];
-      if(row7Type !== undefined){
+      if(row7Type){
         state.pieces[this.idCounter++] = {id: this.idCounter, type: row7Type, x: i, y: 7, owner: 'white'}
         state.pieces[this.idCounter++] = {id: this.idCounter, type: row7Type, x: i, y: 0, owner: 'black'}
       }
-      if(row6Type !== undefined){
+      if(row6Type){
         state.pieces[this.idCounter++] = {id: this.idCounter, type: row6Type, x: i, y: 6, owner: 'white'}
         state.pieces[this.idCounter++] = {id: this.idCounter, type: row6Type, x: i, y: 1, owner: 'black'}
       }
@@ -75,28 +76,34 @@ class ChessGame {
 
   setState(state){
     this.state = state;
-    this.pieces = {};
-    this.board = this.initBoard();
     this.whitePlayer = new Player('white');
     this.blackPlayer = new Player('black');
-
-    for(let id in state.pieces){
-      this.createPiece(state.pieces[id]);
-    }
+    this.pieces = {};
+    this.fillBoard();
+    this.addPieces();
     this.doTileChecks();
   }
 
-  initBoard(){
-    return _.times(8, (j) => _.times(8, (i) => new Tile(i,j, this)));
+  fillBoard(){
+    this.board = _.times(8, (j) => _.times(8, (i) => new Tile(i,j, this)));
   }
 
-  createPiece(pieceState){
+  addPieces(){
+    const state = this.state;
+    for(let id in state.pieces){
+      if (state.pieces.hasOwnProperty(id)) {
+        this.addPiece(state.pieces[id]);
+      }
+    }
+  }
+
+  addPiece(pieceState){
     if(pieceState.id === undefined){
       pieceState.id = this.idCounter++;
     }
     const type = pieceState.type;
     const PieceClass = pieceTypes[type];
-    if(PieceClass == undefined){
+    if(PieceClass === undefined){
       throw new Error('Invalid piece type: ' + type);
     }
     const piece = new PieceClass(pieceState, this);
@@ -173,6 +180,7 @@ class ChessGame {
     }else if(this.kingCount && this.activePlayer.kingCount === 0){
       this.state.winner = this.activePlayer === 'white' ? 'black' : 'white';
     }
+    console.log('winner', this.state.winner)
   }
 
   getLatestMove(){

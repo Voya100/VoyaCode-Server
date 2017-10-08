@@ -1,9 +1,6 @@
 const Piece= require('./piece');
 const Tile= require('../tile');
 
-// TODO: Move this check to tile implementation
-const enemyColor = {white: 'black', black: 'white'}
-
 module.exports = class King extends Piece{
 
   constructor(state, game){
@@ -29,12 +26,11 @@ module.exports = class King extends Piece{
     let kingDir = x < this.x ? -1 : 1;
     let tilesInRooksDirection = targetTile.checkDirection(kingDir,0,8);
     let rookTile = tilesInRooksDirection[tilesInRooksDirection.length-1];
-    if(rookTile.isEmpty || rookTile.piece.type !== 'rook'){
+    if(rookTile.isEmpty() || rookTile.piece.type !== 'rook'){
       throw new Error('Invalid castling call');
     }else{
-      rookTile.piece.move(x-kingDir, y, false);
+      rookTile.piece.move(x-kingDir, y);
     }
-
   }
 
   tileCheck(){
@@ -48,7 +44,7 @@ module.exports = class King extends Piece{
   // Adds tiles related to castling. Must be done after all other tileChecks have been done
   castlingCheck(rooks){
     // King must not have moved and must not be in check
-    if(this.hasMoved || this.threats().length !== 0){
+    if(this.hasMoved || this.threats.length !== 0){
       return;
     }
     for(let rook of rooks){
@@ -67,7 +63,7 @@ module.exports = class King extends Piece{
     let tilesBetween = target.tilesBetween(this.tile);
     tilesBetween.push(target);
     let tilesWithPieces = tilesBetween.filter((tile) => !tile.isEmpty);
-    let dangerTiles = tilesBetween.filter((tile) => tile[enemyColor[this.color] + "Hits"].length !== 0);
+    let dangerTiles = tilesBetween.filter((tile) => tile.getThreats(this.color).length !== 0);
     if(tilesWithPieces.length !== 0 || dangerTiles.length !== 0){
       return false;
     }

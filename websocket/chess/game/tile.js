@@ -1,5 +1,10 @@
 
 class Tile {
+  
+  static tileExists(x, y){
+    return 0 <= y && y < 8 && 0 <= x && x < 8;
+  }
+
   constructor(x, y, game){
     this.x = x;
     this.y = y;
@@ -12,11 +17,23 @@ class Tile {
   }
 
   get board(){ return this.game.board }
-  get isEmpty(){ return this.piece === null }
-
   
-  static tileExists(x, y){
-    return 0 <= y && y < 8 && 0 <= x && x < 8;
+  isEmpty(){ return this.piece === null }
+
+  getThreats(color){
+    return color === 'white' ? this.blacks : this.whites;
+  }
+
+  getFriends(color){
+    return color === 'white' ? this.whites : this.blacks;
+  }
+
+  getThreatHits(color){
+    return color === 'white' ? this.blackHits : this.whiteHits;
+  }
+
+  getFriendHits(color){
+    return color === 'white' ? this.whiteHits : this.blackHits;
   }
 
   isFriendOf(pieceOrPlayer){
@@ -63,7 +80,7 @@ class Tile {
     let x_add = 0, y_add = 0;
     // Checks that they are on same column/row or diagonal
     if(this.x !== tile.x && this.y !== tile.y && Math.abs(this.x-tile.x) !== Math.abs(this.y-tile.y)){
-      return false;
+      return [];
     }
     if(this.x !== tile.x){
       x_add = this.x < tile.x ? 1 : -1;
@@ -112,7 +129,7 @@ class Tile {
       if(x + x_add*i < 8 && x + x_add*i >= 0 && y + y_add*i < 8 && y + y_add*i >= 0){
         let tile = this.board[y + y_add*i][x + x_add*i];
         tiles.push(tile);
-        if(!tile.isEmpty){
+        if(!tile.isEmpty()){
           break;
         }
       }
@@ -121,10 +138,10 @@ class Tile {
   }
   
   // Tells if piece on this tile is preventing enemy from going to target tile
-  protectsTile(targetTile, player){
+  protectsTile(targetTile, pieceOrPlayer){
     // Doesn't protect if there are pieces between this and the tile
     const tilesBetween = this.tilesBetween(targetTile);
-    if(tilesBetween === false || tilesBetween.filter((tile) => !tile.isEmpty).length > 0){
+    if(tilesBetween.filter((tile) => !tile.isEmpty()).length > 0){
       return false;
     }
     
@@ -134,9 +151,9 @@ class Tile {
     if(this.x == targetTile.x){ // They are on same column, threats: rook and queen
       for(let y = this.y+yDir; 0 <= y && y < 8; y += yDir){
         let tile = this.game.board[y][this.x];
-        if(tile.isEnemyOf(player) && (tile.piece.type == 'rook' || tile.piece.type == 'queen')){
+        if(tile.isEnemyOf(pieceOrPlayer) && (tile.piece.type === 'rook' || tile.piece.type === 'queen')){
           return true;
-        }else if(!tile.isEmpty){
+        }else if(!tile.isEmpty()){
           break;
         }
       }
@@ -144,9 +161,9 @@ class Tile {
     if(this.y == targetTile.y){ // They are on same row, threats: rook and queen
       for(let x = this.x+xDir; 0 <= x && x < 8; x += xDir){
         let tile = this.game.board[this.y][x];
-        if(tile.isEnemyOf(player) && (tile.piece.type == 'rook' || tile.piece.type == 'queen')){
+        if(tile.isEnemyOf(pieceOrPlayer) && (tile.piece.type === 'rook' || tile.piece.type === 'queen')){
           return true;
-        }else if(!tile.isEmpty){
+        }else if(!tile.isEmpty()){
           break;
         }
       }
@@ -154,9 +171,9 @@ class Tile {
     if(Math.abs(this.y-targetTile.y) == Math.abs(this.x-targetTile.x)){ // They are diagonal, threats: bishop and queen
       for(let x = this.x+xDir, y = this.y+yDir;0 <= x && x < 8 && 0 <= y && y < 8; x+= xDir, y+= yDir){
         let tile = this.game.board[y][x];
-        if(tile.isEnemyOf(player)  && (tile.piece.type === 'bishop' || tile.piece.type === 'queen')){
+        if(tile.isEnemyOf(pieceOrPlayer)  && (tile.piece.type === 'bishop' || tile.piece.type === 'queen')){
           return true;
-        }else if(!tile.isEmpty){
+        }else if(!tile.isEmpty()){
           break;
         }
       }
