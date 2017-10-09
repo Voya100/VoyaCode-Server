@@ -51,20 +51,24 @@ class Player {
 
   safeKingMoves(king){
     const threats = king.threats;
-    const kingTiles = king.moveTiles.filter((tile) => {
-      return tile.getThreatHits(this.color).length === 0 && _.every(threats, (threat) => {
-        return !king.tile.isBetween(tile, threat.tile);
-      });
-    });
 
-    const kingDodgeMoves = kingTiles.map((tile) => ({piece: king, tile}));
-    if(threats.length > 1 || threats.length === 0){return kingDodgeMoves; }
+    const dodgeMoves = this.dodgeMoves(king);
+    if(threats.length !== 1){return dodgeMoves; }
 
-    const threat = threats[0];
+    const threat = king.threats[0];
     const threatKillMoves = this.threatKillMoves(threat, king);
     const threatBlockMoves = this.threatBlockMoves(threat, king);
-
-    return [...kingDodgeMoves, ...threatKillMoves, ...threatBlockMoves];
+    return [...dodgeMoves, ...threatKillMoves, ...threatBlockMoves];
+  }
+  
+  dodgeMoves(piece){
+    const threats = piece.threats;
+    const safeTiles = piece.moveTiles.filter((tile) => {
+      return tile.getThreatHits(this.color).length === 0 && _.every(threats, (threat) => {
+        return !piece.tile.isBetween(tile, threat.tile);
+      });
+    });
+    return safeTiles.map((tile) => ({piece, tile}));
   }
 
   // Moves that can be used to kill threat, without leaving the king vulnerable
@@ -74,18 +78,18 @@ class Player {
   }
 
   // Moves that can be used to block a threat, without leaving king vulnerable
-  threatBlockMoves(threat, king){
+  threatBlockMoves(threat, pieceToProtect){
     // Knights can't be blocked
-    if(threat.type === 'knight'){return [];}
+    if(threat.type === 'knight'){return []; }
 
     const moves = [];
-    const tilesBetween = king.tile.tilesBetween(threat.tile);
+    const tilesBetween = pieceToProtect.tile.tilesBetween(threat.tile);
 
-    for(let tile of tilesBetween){
-      const pieces = tile[this.color + 'Hits'].filter((piece) => {
-        return !piece.protectsPiece(king) && piece !== king;
+    for(const tile of tilesBetween){
+      const pieces = tile.getFriends(this.color).filter((piece) => {
+        return !piece.protectsPiece(pieceToProtect) && piece !== pieceToProtect;
       });
-      for(let piece of pieces){
+      for(const piece of pieces){
         moves.push({piece, tile});
       }
     }

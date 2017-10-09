@@ -134,5 +134,20 @@ describe('#Player', function(){
       expect(player.isInCheckMate()).to.be.true;
     });
 
+    it('should be in check mate when king can eliminate threat, but would end up vulnerable again', function(){
+      setBoard(game, [
+        [' ' ,' ' ,' ' ,'WQ',' ' ,'BX',' ' ,'BR'],
+        [' ' ,' ' ,' ' ,' ' ,'WR',' ' ,' ' ,' ' ],
+        ['WP',' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
+        ['WK',' ' ,' ' ,' ' ,' ' ,' ' ,'WP',' ' ],
+        [' ' ,'WP',' ' ,' ' ,' ' ,'WP',' ' ,'BQ'],
+        [' ' ,'WX',' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,'  ',' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ]
+      ])
+      const player = game.blackPlayer;
+      expect(player.isInCheckMate()).to.be.true;
+    });
+
   });
 });
