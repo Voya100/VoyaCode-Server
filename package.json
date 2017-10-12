@@ -34,7 +34,9 @@
     "pg-promise": "^5.9.7",
     "request": "^2.81.0",
     "rss": "^1.2.2",
-    "url-crypt": "^1.2.1"
+    "socket.io": "^2.0.3",
+    "url-crypt": "^1.2.1",
+    "uuid": "^3.1.0"
   },
   "devDependencies": {
     "browser-sync": "^2.18.13",

@@ -1,10 +1,12 @@
 // set up
-var express  = require('express');
-var app      = express();
-var port  	 = process.env.PORT || 8080;
+const express = require('express');
+const app = express();
+const server = require('http').Server(app);  
+const websocket = require('socket.io')(server);
+const port  	 = process.env.PORT || 8080;
 
-var morgan = require('morgan'); 		// log requests to the console
-var bodyParser = require('body-parser'); 	// pull information from HTML POST
+const morgan = require('morgan'); 		// log requests to the console
+const bodyParser = require('body-parser'); 	// pull information from HTML POST
 
 // configuration
 
@@ -16,6 +18,9 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' })); // parse applica
 
 // routes
 require('./routes.js')(app);
+
+// websocket
+require('./websocket/router')(websocket);
 
 // development error handler
 // will print stacktrace
@@ -41,5 +46,5 @@ app.use(function(err, req, res, next) {
 
 
 // listen
-app.listen(port);
+server.listen(port);
 console.log("App listening on port " + port);
