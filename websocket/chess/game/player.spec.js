@@ -104,6 +104,22 @@ describe('#Player', function(){
       expect(player.isInCheckMate()).to.be.false;
     });
     
+    it('should not be in check mate when threat can be eliminated by pieces next to the threat', function(){
+      setBoard(game, [
+        ['BR',' ' ,'BB','BQ','BX','BB','BK','BR'],
+        [' ' ,'BP','BP','WQ','BP','BP','BP','BP'],
+        ['BP','  ','  ','BP','  ','  ','  ','  '],
+        ['  ','  ','WP','  ','  ','  ','  ','  '],
+        ['  ','  ','  ','  ','  ','  ','  ','  '],
+        ['  ','  ','  ','  ','  ','  ','  ','  '],
+        ['WP',' ' ,'WP','WP','WP','WP','WP','WP'],
+        ['WR','WK',' ' ,'WQ','WX','WB','WK','WR']
+      ])
+      const player = game.blackPlayer;
+      expect(player.isInCheckMate()).to.be.false;
+    });
+    
+    
     it('should be in check mate when threat can be blocked, but elimination would leave king vulnerable', function(){
       setBoard(game, [
         [' ' ,' ' ,' ' ,'BR','BR','BR',' ' ,' ' ],
@@ -148,6 +164,68 @@ describe('#Player', function(){
       const player = game.blackPlayer;
       expect(player.isInCheckMate()).to.be.true;
     });
-
   });
+  
+  describe('legal moves', function(){
+    it('should not have legal moves in stalemate where king needs to move', function(){
+      setBoard(game, [
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ',' ' ,'WX' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,'BX','BQ',' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,'  ',' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ]
+      ])
+      const player = game.whitePlayer;
+      expect(player.legalMoves.length).to.equal(0);
+    });
+  
+    it('should not have legal moves in stalemate where piece protecting the king needs to move', function(){
+      setBoard(game, [
+        [' ' ,' ' ,' ' ,' ' ,'BQ',' ' ,'WP','WX'],
+        [' ' ,' ' ,' ' ,' ' ,'BQ',' ' ,' ' ,' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,'  ',' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ]
+      ])
+      const player = game.whitePlayer;
+      expect(player.legalMoves.length).to.equal(0);
+    });
+    
+    it('should have legal moves when piece can move towards potential threat', function(){
+      setBoard(game, [
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,'BX',' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,'BP',' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,'WR','WR','WR'],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,'  ',' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ]
+      ])
+      const player = game.blackPlayer;
+      expect(player.legalMoves.length).to.equal(2);
+    });
+    
+    it('should have legal moves when piece can move away from potential threat', function(){
+      setBoard(game, [
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,'BX' ,' '],
+        [' ' ,' ' ,' ' ,' ' ,'WR' ,' ' ,' ',' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,'BR',' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,'WR','WR','WR'],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,'  ',' ' ],
+        [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ]
+      ])
+      const player = game.blackPlayer;
+      expect(player.legalMoves.length).to.equal(3);
+    });
+  });
+
 });

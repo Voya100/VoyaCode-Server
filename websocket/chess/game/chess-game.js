@@ -175,8 +175,12 @@ class ChessGame {
   checkIfGameHasEnded(){
     if(this.state.round > this.state.roundLimit){
       this.state.winner = 'tie';
-    }else if(this.activePlayer.possibleMoves.length === 0){
-      this.state.winner = this.activePlayer === 'white' ? 'black' : 'white';
+    }else if(this.activePlayer.legalMoves.length === 0){
+      if(this.activePlayer.isInCheckMate()){
+        this.state.winner = this.activePlayer === 'white' ? 'black' : 'white';
+      }else{
+        this.state.winner = 'tie';
+      }
     }else if(this.kingCount && this.activePlayer.kingCount === 0){
       this.state.winner = this.activePlayer === 'white' ? 'black' : 'white';
     }
