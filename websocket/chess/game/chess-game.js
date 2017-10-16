@@ -63,12 +63,12 @@ class ChessGame {
       const row6Type = row6[i];
       const row7Type = row7[i];
       if(row7Type){
-        state.pieces[this.idCounter++] = {id: this.idCounter, type: row7Type, x: i, y: 7, owner: 'white'}
-        state.pieces[this.idCounter++] = {id: this.idCounter, type: row7Type, x: i, y: 0, owner: 'black'}
+        state.pieces[++this.idCounter] = {id: this.idCounter, type: row7Type, x: i, y: 7, owner: 'white'}
+        state.pieces[++this.idCounter] = {id: this.idCounter, type: row7Type, x: i, y: 0, owner: 'black'}
       }
       if(row6Type){
-        state.pieces[this.idCounter++] = {id: this.idCounter, type: row6Type, x: i, y: 6, owner: 'white'}
-        state.pieces[this.idCounter++] = {id: this.idCounter, type: row6Type, x: i, y: 1, owner: 'black'}
+        state.pieces[++this.idCounter] = {id: this.idCounter, type: row6Type, x: i, y: 6, owner: 'white'}
+        state.pieces[++this.idCounter] = {id: this.idCounter, type: row6Type, x: i, y: 1, owner: 'black'}
       }
     }
     this.setState(state);
@@ -161,7 +161,8 @@ class ChessGame {
   removePiece(id){
     const piece = this.pieces[id];
     this.state.pieces[id] = undefined;
-    const player = piece.isWhite ? this.whitePlayer : this.blackPlayer;
+    this.pieces[id] = undefined;
+    const player = piece.isWhite() ? this.whitePlayer : this.blackPlayer;
     player.removePiece(piece);
   }
 

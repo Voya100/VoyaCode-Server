@@ -1,10 +1,5 @@
 const _ = require('lodash');
 
-const oppositeColor = {
-  'white': 'black',
-  'black': 'white'
-}
-
 // Abstract class
 class Piece{
 
@@ -41,7 +36,7 @@ class Piece{
   move(x, y){
     this.tile.piece = null;
     this.tile = this.game.board[y][x];
-    if(!this.tile.isEmpty){
+    if(!this.tile.isEmpty()){
       this.tile.piece.die();
     }
     this.tile.setPiece(this);
