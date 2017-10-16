@@ -81,7 +81,7 @@ module.exports = class Pawn extends Piece{
   tryToDoEnPassant(x, y){
     let tile = this.board[y][x];
     // En passant if movement is diagonal and target tile is empty
-    if(x !== this.x && tile.isEmpty){
+    if(x !== this.x && tile.isEmpty()){
       this.board[y-this.yDir][x].piece.die();
     }
   }
