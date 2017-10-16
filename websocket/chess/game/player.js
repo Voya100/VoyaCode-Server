@@ -30,26 +30,26 @@ class Player {
   }
 
   get legalMoves(){
-    if(!this.isInCheck()){
-      if(this.kingCount !== 1){
-        return this.allMoves;
-      }
-      const king = this.kings[0];
-      return this.allMoves.filter(({piece, tile}) => {
-        if(piece === king){
-          return !tile.getThreatHits(this.color).length;
-        }else if(piece.protectsPiece(king)){
-          // Piece is between threat and king
-          const xDir = Math.sign(piece.x - king.x);
-          const yDir = Math.sign(piece.y - king.y);
-          const oppositeTiles = piece.tile.checkDirection(xDir, yDir, 8);
-          const threatTile = oppositeTiles[oppositeTiles.length - 1];
-          return tile.isBetween(king.tile, threatTile) || tile === threatTile;
-        }
-      })
-    }else{
+    if(this.isInCheck()){
       return this.safeKingMoves(this.kings[0]);
     }
+    if(this.kingCount !== 1){
+      return this.allMoves;
+    }
+    const king = this.kings[0];
+    return this.allMoves.filter(({piece, tile}) => {
+      if(piece === king){
+        return !tile.getThreatHits(this.color).length;
+      }else if(piece.protectsPiece(king)){
+        // Piece is between threat and king
+        const xDir = Math.sign(piece.x - king.x);
+        const yDir = Math.sign(piece.y - king.y);
+        const oppositeTiles = piece.tile.checkDirection(xDir, yDir, 8);
+        const threatTile = oppositeTiles[oppositeTiles.length - 1];
+        return tile.isBetween(king.tile, threatTile) || tile === threatTile;
+      }
+      return true;
+    })
   }
 
   get allMoves(){
