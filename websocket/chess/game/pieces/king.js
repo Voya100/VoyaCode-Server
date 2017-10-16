@@ -62,7 +62,7 @@ module.exports = class King extends Piece{
     }
     let tilesBetween = target.tilesBetween(this.tile);
     tilesBetween.push(target);
-    let tilesWithPieces = tilesBetween.filter((tile) => !tile.isEmpty);
+    let tilesWithPieces = tilesBetween.filter((tile) => !tile.isEmpty());
     let dangerTiles = tilesBetween.filter((tile) => tile.getThreats(this.color).length !== 0);
     if(tilesWithPieces.length !== 0 || dangerTiles.length !== 0){
       return false;
