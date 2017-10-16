@@ -44,8 +44,8 @@ describe('#Pawn', function(){
       const whitePawn = game.getPiece(3,6);
       const blackPawn = game.getPiece(5,1);
 
-      game.makeMove({id: whitePawn.id, x: 3, y: 4});
-      game.makeMove({id: blackPawn.id, x: 5, y: 3});
+      game.makeMove({xStart: whitePawn.x, yStart: whitePawn.y, xEnd: 3, yEnd: 4});
+      game.makeMove({xStart: blackPawn.x, yStart: blackPawn.y, xEnd: 5, yEnd: 3});
 
       compareMoves(3,4, game, [
         [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
@@ -160,7 +160,7 @@ describe('#Pawn', function(){
       blackPawn.hasMoved = true;
       whitePawn.hasMoved = true;
 
-      game.makeMove({id: whitePawnTarget.id, x: 3, y: 4});
+      game.makeMove({xStart: whitePawnTarget.x, yStart: whitePawnTarget.y, xEnd: 3, yEnd: 4});
   
       compareMoves(4,4, game, [
         [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
@@ -173,11 +173,11 @@ describe('#Pawn', function(){
         [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,'  ']
       ]);
 
-      game.makeMove({id: blackPawn.id, x: 3, y: 5});
+      game.makeMove({xStart: blackPawn.x, yStart: blackPawn.y, xEnd: 3, yEnd: 5});
 
       game.changeTurn();
 
-      game.makeMove({id: blackPawnTarget.id, x: 5, y: 3});
+      game.makeMove({xStart: blackPawnTarget.x, yStart: blackPawnTarget.y, xEnd: 5, yEnd: 3});
 
       compareMoves(6,3, game, [
         [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
@@ -190,7 +190,7 @@ describe('#Pawn', function(){
         [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,'  ']
       ]);
 
-      game.makeMove({id: whitePawn.id, x: 5, y: 2});
+      game.makeMove({xStart: whitePawn.x, yStart: whitePawn.y, xEnd: 5, yEnd: 2});
 
       // Pieces should be eaten
       expect(game.getPiece(3,4)).to.be.null;
@@ -214,7 +214,7 @@ describe('#Pawn', function(){
 
       blackPawn.hasMoved = true;
 
-      game.makeMove({id: whitePawnTarget.id, x: 6, y: 4});
+      game.makeMove({xStart: whitePawnTarget.x, yStart: whitePawnTarget.y, xEnd: 6, yEnd: 4});
   
       compareMoves(7,4, game, [
         [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ],
@@ -248,7 +248,7 @@ describe('#Pawn', function(){
       blackPawn.hasMoved = true;
       whitePawn.hasMoved = true;
 
-      game.makeMove({id: whitePawnTarget.id, x: 3, y: 4});
+      game.makeMove({xStart: whitePawnTarget.x, yStart: whitePawnTarget.y, xEnd: 3, yEnd: 4});
 
       game.changeTurn();
       game.changeTurn();
@@ -264,7 +264,7 @@ describe('#Pawn', function(){
         [' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,' ' ,'  ']
       ]);
 
-      game.makeMove({id: blackPawnTarget.id, x: 5, y: 3});
+      game.makeMove({xStart: blackPawnTarget.x, yStart: blackPawnTarget.y, xEnd: 5, yEnd: 3});
 
       game.changeTurn();
       game.changeTurn();
@@ -299,8 +299,8 @@ describe('#Pawn', function(){
       const whitePawn = game.getPiece(4,1);
       const blackPawn = game.getPiece(4,6);
   
-      game.makeMove({id: whitePawn.id, x: 4, y: 0});
-      game.makeMove({id: blackPawn.id, x: 4, y: 7});
+      game.makeMove({xStart: whitePawn.x, yStart: whitePawn.y, xEnd: 4, yEnd: 0});
+      game.makeMove({xStart: blackPawn.x, yStart: blackPawn.y, xEnd: 4, yEnd: 7});
 
       const whiteQueen = game.getPiece(4, 0);
       const blackQueen = game.getPiece(4, 7);

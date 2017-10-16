@@ -134,7 +134,7 @@ describe('#King', function(){
 
     it('should move king and rook correctly (left black)', function(){
       game.changeTurn();
-      game.makeMove({id: blackKing.id, x: 2, y: 0});
+      game.makeMove({xStart: blackKing.x, yStart: blackKing.y, xEnd: 2, yEnd: 0});
       expect(blackKing.x).to.equal(2);
       expect(blackKing.y).to.equal(0);
       expect(blackRook1.x).to.equal(3);
@@ -143,7 +143,7 @@ describe('#King', function(){
     
     it('should move king and rook correctly (right black)', function(){
       game.changeTurn();
-      game.makeMove({id: blackKing.id, x: 6, y: 0});
+      game.makeMove({xStart: blackKing.x, yStart: blackKing.y, xEnd: 6, yEnd: 0});
       expect(blackKing.x).to.equal(6);
       expect(blackKing.y).to.equal(0);
       expect(blackRook2.x).to.equal(5);
@@ -151,7 +151,7 @@ describe('#King', function(){
     });
     
     it('should move king and rook correctly (left white)', function(){
-      game.makeMove({id: whiteKing.id, x: 2, y: 7});
+      game.makeMove({xStart: whiteKing.x, yStart: whiteKing.y, xEnd: 2, yEnd: 7});
       expect(whiteKing.x).to.equal(2);
       expect(whiteKing.y).to.equal(7);
       expect(whiteRook1.x).to.equal(3);
@@ -159,7 +159,7 @@ describe('#King', function(){
     });
     
     it('should move king and rook correctly (right white)', function(){
-      game.makeMove({id: whiteKing.id, x: 6, y: 7});
+      game.makeMove({xStart: whiteKing.x, yStart: whiteKing.y, xEnd: 6, yEnd: 7});
       expect(whiteKing.x).to.equal(6);
       expect(whiteKing.y).to.equal(7);
       expect(whiteRook2.x).to.equal(5);

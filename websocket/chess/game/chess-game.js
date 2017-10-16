@@ -112,32 +112,38 @@ class ChessGame {
     this[piece.color + 'Player'].addPiece(piece);
   }
 
-  makeMove({id, x, y}){
-    const piece = this.pieces[id];
-    const target = this.board[y][x];
+  makeMove({xStart, xEnd, yStart, yEnd}){
+    const piece = this.board[yStart][xStart].piece;
+    const target = this.board[yEnd][xEnd];
+    // TODO: Error handling
     
     if(piece.color !== this.state.activePlayer){
       throw new Error('not-your-turn');
     }
 
-    const move = {xStart: piece.x, yStart: piece.y, pieceType: piece.type, target: target.piece && target.piece.type};
+    const move = {xStart, yStart, xEnd, yEnd, pieceType: piece.type, target: target.piece && target.piece.type};
 
-    this.movePiece(id, x, y);
+    this.movePiece(piece, target);
     this.latestMove = move;
-
+    
     this.changeTurn();
     this.checkIfGameHasEnded();
 
     return move;
   }
 
-  movePiece(id, x, y){
-    const piece = this.pieces[id];
-    const target = this.board[y][x];
+  makeRandomMove(){
+    console.log('random move count', this.activePlayer.allMoves.length)
+    const {piece, tile} = _.sample(this.activePlayer.legalMoves);
+    console.log('random move', {id: piece.id, x: tile.x, y: tile.y})
+    return this.makeMove({xStart: piece.x, xEnd: tile.x, yStart: piece.y, yEnd: tile.y});
+  }
+
+  movePiece(piece, target){
     if(!piece.canMove(target)){
       throw new Error('invalid-move');
     }
-    piece.move(x, y);
+    piece.move(target.x, target.y);
   }
 
   changeTurn(){
