@@ -88,6 +88,9 @@ function chessWebsocket(io){
       user.denyChallenges();
       opponent.denyChallenges();
 
+      user.game = game;
+      opponent.game = game;
+
       socket.join(game.id);
       opponent.socket.join(game.id);
 
@@ -103,7 +106,7 @@ function chessWebsocket(io){
     });
     
     socket.on('game-action', (gameMove, cb) => {
-      const game = this.user.game;
+      const game = socket.user.game;
       if(!game){
         callback(cb, 'game-does-not-exist');
         return;
