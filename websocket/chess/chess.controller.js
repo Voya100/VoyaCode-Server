@@ -1,16 +1,15 @@
 const uuid = require('uuid');
-const ChessGame = require('./game/chess-game');
+const ChessInstance = require('./chess-instance');
+const ChessUser = require('./chess-user');
 
 let sessions = {}; // sessionId: user
-let users = {}; // username: {username, socketId, gameId, isOnline, ?challenge}
-let games = {}; // gameId: {whitePlayer, blackPlayer, game, timeLimit, hasEnded}
-let challenges = {}; // username: {username, timeLimit, roundLimit, row1, row2}
+let users = {}; // username: {username, socket, game, isOnline, challengesReceived: {username: game}, challengeSent: game}
 
 function chessWebsocket(io){
 
   io.on('connect', function(socket){
 
-    socket.user = {};
+    socket.user = new ChessUser(socket);
     socket.sessionId = '';
 
     console.log('connected')
@@ -26,7 +25,7 @@ function chessWebsocket(io){
     socket.on('join-lobby', ({username}, callback) => {
       console.log('join-lobby');
       socket.sessionId = uuid.v4();
-      socket.user = {username, socketId: socket.id, isOnline: true, isInGame: false}
+      socket.user.setName(username);
 
       users[username] = socket.user;
       sessions[socket.sessionId] = socket.user;
@@ -42,7 +41,7 @@ function chessWebsocket(io){
       if(sessions[sessionId]){
         socket.sessionId = sessionId;
         socket.user = sessions[sessionId];
-        socket.uset.socketId = socket.id;
+        socket.user.setSocket(socket.id);
         socket.user.isOnline = true;
         socket.emit('set-users', users);
         // TODO: check if player is in a game
@@ -52,9 +51,12 @@ function chessWebsocket(io){
     socket.on('challenge-player', ({username, timeLimit, maxRounds, row1, row2}, callback) => {
       console.log('challenge-player')
       const challengedUser = users[username];
-      if(!challengedUser || !challengedUser.isOnline || challengedUser.isInGame || challenges[username]){
-        console.log('user is unavailable', challengedUser, !challengedUser || !challengedUser.isOnline || challengedUser.isInGame || challenges[username]);
-        callback('User is unavailable');
+      if(socket.user.challengeSent){
+        console.log('challenge already sent');
+        callback('challenge-already-sent')
+      }
+      if(!challengedUser || !challengedUser.isOnline || challengedUser.game){
+        console.log('user is unavailable', challengedUser, !challengedUser || !challengedUser.isOnline || challengedUser.game);
         return;
       }
       socket.user.challenge = {username, timeLimit, maxRounds, row1, row2};
@@ -66,36 +68,32 @@ function chessWebsocket(io){
     });
 
     socket.on('cancel-challenge', () => {
-      const challenger = users[challenges[socket.user.username].username];
-      // TODO: error handling
-      socket.to(challenger.socketId).emit('cancel-challenge');
-    })
+      socket.user.cancelChallenge();
+    });
 
-    socket.on('accept-challenge', () => {
+    socket.on('accept-challenge', (challengerName, cb) => {
       // starts new game
       // TODO: error handling
-      const challenge = challenges[socket.user.username];
-      const opponent = users[challenge.username];
-      const gameId = uuid.v4();
-      const game = new ChessGame();
-      game.newGame(challenge.row2, challenge.row1, challenge.maxRounds);
-      games[gameId] = {whitePlayer: opponent, blackPlayer: socket.user, game, timeLimit: challenge.timeLimit, hasEnded: false};
+      const user = socket.user;
+      const opponent = users[challengerName];
+      const challenge = user.challengesReceived[challengerName];
+      if(!challenge || !opponent){
+        cb('user-unavailable');
+        return;
+      }
+      const game = challenge;
 
-      socket.user.gameId = gameId;
-      opponent.gameId = gameId;
-      const state = {whitePlayer: opponent.username, blackPlayer: socket.user.username, timeLimit: challenge.timeLimit, state: game.state}
-      socket.emit('set-state', state);
-      socket.to(opponent.socketId).emit('set-state', state);
+      // Cancel all other challenges players may have received/sent
+      user.challengesReceived[opponent.username] = undefined;
+      user.cancelChallenge();
+      user.denyChallenges();
+      opponent.denyChallenges();
 
-      socket.join(gameId);
-      io.sockets[opponent.socketId].join(gameId);
+      socket.join(game.id);
+      opponent.socket.join(game.id);
 
-      let startTime = new Date(); 
-      let round = game.state.round;
-      let activePlayer = game.state.activePlayer;
-      let interval;
-
-      challenge.timeLimit = 2; // Todo: remove this test value
+      console.log('starting new game');
+      game.newGame();
 
       interval = setInterval(() => {
         if(games[gameId].game.state.winner){
@@ -124,20 +122,19 @@ function chessWebsocket(io){
       
     });
     
-    socket.on('deny-challenge', () => {
-      
+    socket.on('deny-challenge', (challenger) => {
+      socket.user.denyChallenge(challenger);
     });
     
-    socket.on('game-action', ({xStart, xEnd, yStart, yEnd}, callback) => {
-      const gameId = socket.user.gameId;
+    socket.on('game-action', (gameMove, cb) => {
+      const game = this.user.game;
+      // Todo: More error handling
       try{
-        const gameData = games[gameId]
-        const move = gameData.game.makeMove({xStart, xEnd, yStart, yEnd});
-        io.to(gameId).emit('game-action', move);
-        callback();
+        game.makeMove(gameMove);
+        callback(cb);
       } catch(e) {
         console.log('game-action error');
-        callback(e)
+        callback(cb, e)
       }
     });
     
@@ -146,18 +143,25 @@ function chessWebsocket(io){
     });
 
     socket.on('disconnect', () => {
-      const username = socket.user.username;
-      console.log('disconnect', socket.user);
-      socket.user.isOnline = false;
-      socket.broadcast.emit('user-removed', socket.user.username);
-      if(challenges[username]){
-        delete challenges[socket.user.username];
-        // TODO: cancel challenge
-      }
+      const user = socket.user;
+      user.isOnline = false;
+      console.log('disconnect', user.getState());
+      socket.broadcast.emit('user-removed', user.username);
+
+      user.cancelChallenge();
+      user.denyChallenges();
+
       setTimeout(() => {
-        if(socket.user && !socket.user.isOnline){
+        if(socket.user !== user || !user.isOnline){
+          console.log('60 s timeout, clearing user', user.getState());
           delete users[socket.user.id];
           delete sessions[socket.sessionId];
+          const game = user.game;
+          if(game && !game.hasActivePlayers()){
+            console.log('Game has no active players, clearing')
+            game.clearInterval();
+          }
+          // Todo: Emit something to opponent if in game?
         }
       }, 60 * 1000);
     });
