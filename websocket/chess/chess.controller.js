@@ -14,15 +14,13 @@ function chessWebsocket(io){
 
     console.log('connected')
 
-    socket.emit('test', {data: 'hello player!'});
-
     // Debug
     socket.use((packet, next) => {
       console.log('packet', packet);
       next();
     })
 
-    socket.on('join-lobby', ({username}, callback) => {
+    socket.on('join-lobby', ({username}, cb) => {
       console.log('join-lobby');
       socket.sessionId = uuid.v4();
       socket.user.setName(username);
@@ -34,7 +32,7 @@ function chessWebsocket(io){
       socket.broadcast.emit('user-added', username);
       socket.emit('set-users', getLobbyUsers());
       // No errors
-      callback();
+      callback(cb);
     });
     
     socket.on('rejoin', ({sessionId}) => {
@@ -48,23 +46,24 @@ function chessWebsocket(io){
       }
     });
     
-    socket.on('challenge-player', ({username, timeLimit, maxRounds, row1, row2}, callback) => {
+    socket.on('challenge-player', ({username, timeLimit, maxRounds, row1, row2}, cb) => {
       console.log('challenge-player')
       const challengedUser = users[username];
       if(socket.user.challengeSent){
         console.log('challenge already sent');
-        callback('challenge-already-sent')
+        callback(cb, 'challenge-already-sent');
       }
       if(!challengedUser || !challengedUser.isOnline || challengedUser.game){
         console.log('user is unavailable', challengedUser, !challengedUser || !challengedUser.isOnline || challengedUser.game);
+        callback(cb, 'user-is-unavailable');
         return;
       }
-      socket.user.challenge = {username, timeLimit, maxRounds, row1, row2};
+      const game = new ChessInstance({whitePlayer: socket.user, blackPlayer: challengedUser, timeLimit, roundLimit: maxRounds, row1, row2}, io);
+      socket.user.challengeSent = game;
+      challengedUser.challengesReceived[socket.user.username] = game;
 
-      challenges[username] = {username: socket.user.username, timeLimit, maxRounds, row1, row2};
-      console.log('send challenge', challengedUser);
-      const opponentSocketId = challengedUser.socketId;
-      socket.to(opponentSocketId).emit('challenge', challenges[username]);      
+      console.log('send challenge', challengedUser.getState());
+      game.sendChallenge();
     });
 
     socket.on('cancel-challenge', () => {
@@ -78,7 +77,7 @@ function chessWebsocket(io){
       const opponent = users[challengerName];
       const challenge = user.challengesReceived[challengerName];
       if(!challenge || !opponent){
-        cb('user-unavailable');
+        callback(cb, 'user-unavailable');
         return;
       }
       const game = challenge;
@@ -95,30 +94,7 @@ function chessWebsocket(io){
       console.log('starting new game');
       game.newGame();
 
-      interval = setInterval(() => {
-        if(games[gameId].game.state.winner){
-          console.log('clear interval');
-          clearInterval(interval);
-        }
-        if(round !== game.state.round || activePlayer !== game.state.activePlayer){
-          startTime = new Date();
-          round = game.state.round;
-          activePlayer = game.state.activePlayer; 
-          io.to(gameId).emit('timer', challenge.timeLimit);
-          return;
-        }
-        let timeSpent = Math.floor((new Date() - startTime) / 1000);
-        if(timeSpent > challenge.timeLimit){
-          // TODO: random move
-          const move = game.makeRandomMove();
-          move.timeout = true;
-          io.to(gameId).emit('game-action', move);
-          console.log('time limit exceeded, random move', move);
-        }else{
-          io.to(gameId).emit('timer', challenge.timeLimit - timeSpent);
-        }
-
-      }, 1000);
+      callback(cb);
       
     });
     
@@ -128,6 +104,10 @@ function chessWebsocket(io){
     
     socket.on('game-action', (gameMove, cb) => {
       const game = this.user.game;
+      if(!game){
+        callback(cb, 'game-does-not-exist');
+        return;
+      }
       // Todo: More error handling
       try{
         game.makeMove(gameMove);
@@ -138,9 +118,13 @@ function chessWebsocket(io){
       }
     });
     
-    socket.on('get-state', function(){
-      socket.emit('set-users', getLobbyUsers)
+    socket.on('get-state', function(cb){
+      callback(cb, getLobbyUsers());
     });
+
+    socket.on('reconnect', () => {
+      console.log('reconnect', socket.user.getState());
+    })
 
     socket.on('disconnect', () => {
       const user = socket.user;
@@ -178,6 +162,13 @@ function getLobbyUsers(){
     userList.push(username);
   }
   return userList;
+}
+
+// Ensures that callback is a function before it's called
+function callback(callbackFunction, error, returnValue){
+  if(typeof callbackFunction === "function"){
+    callbackFunction(error, returnValue);
+  }
 }
 
 module.exports = chessWebsocket;
