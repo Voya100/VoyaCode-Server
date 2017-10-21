@@ -60,10 +60,13 @@ module.exports = class King extends Piece{
     if(rook.hasMoved || rook.y !== this.y || target === null){
       return false;
     }
-    let tilesBetween = target.tilesBetween(this.tile);
-    tilesBetween.push(target);
+    let tilesBetween = this.tile.tilesBetween(rook.tile);
     let tilesWithPieces = tilesBetween.filter((tile) => !tile.isEmpty());
-    let dangerTiles = tilesBetween.filter((tile) => tile.getThreats(this.color).length !== 0);
+
+    let tilesInKingPath = target.tilesBetween(this.tile);
+    tilesInKingPath.push(target);
+    let dangerTiles = tilesInKingPath.filter((tile) => tile.getThreats(this.color).length !== 0);
+
     if(tilesWithPieces.length !== 0 || dangerTiles.length !== 0){
       return false;
     }
