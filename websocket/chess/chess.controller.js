@@ -46,7 +46,7 @@ function chessWebsocket(io){
       }
     });
     
-    socket.on('challenge-player', ({username, timeLimit, maxRounds, row1, row2}, cb) => {
+    socket.on('challenge-player', ({username, timeLimit, roundLimit, row1, row2}, cb) => {
       console.log('challenge-player')
       const challengedUser = users[username];
       if(socket.user.challengeSent){
@@ -58,7 +58,7 @@ function chessWebsocket(io){
         callback(cb, 'user-is-unavailable');
         return;
       }
-      const game = new ChessInstance({whitePlayer: socket.user, blackPlayer: challengedUser, timeLimit, roundLimit: maxRounds, row1, row2}, io);
+      const game = new ChessInstance({whitePlayer: socket.user, blackPlayer: challengedUser, timeLimit, roundLimit, row1, row2}, io);
       socket.user.challengeSent = game;
       challengedUser.challengesReceived[socket.user.username] = game;
 
@@ -66,8 +66,9 @@ function chessWebsocket(io){
       game.sendChallenge();
     });
 
-    socket.on('cancel-challenge', () => {
+    socket.on('cancel-challenge', (cb) => {
       socket.user.cancelChallenge();
+      callback(cb);
     });
 
     socket.on('accept-challenge', (challengerName, cb) => {
@@ -85,8 +86,8 @@ function chessWebsocket(io){
       // Cancel all other challenges players may have received/sent
       user.challengesReceived[opponent.username] = undefined;
       user.cancelChallenge();
-      user.denyChallenges();
-      opponent.denyChallenges();
+      user.declineChallenges();
+      opponent.declineChallenges();
 
       user.game = game;
       opponent.game = game;
@@ -101,8 +102,9 @@ function chessWebsocket(io){
       
     });
     
-    socket.on('deny-challenge', (challenger) => {
-      socket.user.denyChallenge(challenger);
+    socket.on('decline-challenge', (challenger, cb) => {
+      socket.user.declineChallenge(challenger);
+      callback(cb);
     });
     
     socket.on('game-action', (gameMove, cb) => {
@@ -136,7 +138,7 @@ function chessWebsocket(io){
       socket.broadcast.emit('user-removed', user.username);
 
       user.cancelChallenge();
-      user.denyChallenges();
+      user.declineChallenges();
 
       setTimeout(() => {
         if(socket.user !== user || !user.isOnline){
@@ -150,7 +152,7 @@ function chessWebsocket(io){
           }
           // Todo: Emit something to opponent if in game?
         }
-      }, 60 * 1000);
+      }, 5 * 1000); // TODO: Change to 60 * 1000
     });
     
 

@@ -32,20 +32,20 @@ module.exports = class ChessUser{
     this.challengeSent = null;
   }
 
-  // Denies challenge user has received
-  denyChallenge(challengerName){
+  // Declines challenge user has received
+  declineChallenge(challengerName){
     const challenge = this.challengesReceived[challengerName];
     if(!challenge){
       return;
     }
     const challenger = challenge.getOpponent(this.user);
     this.challengesReceived[challenger] = null;
-    challenger.socket.emit('challenge-denied');
+    challenger.socket.emit('challenge-declined');
   }
 
-  denyChallenges(){
+  declineChallenges(){
     for(const challengerName in this.challengesReceived){
-      this.denyChallenge(challengerName);
+      this.declineChallenge(challengerName);
     }
   }
 }

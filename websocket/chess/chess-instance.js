@@ -33,7 +33,7 @@ module.exports = class ChessInstance{
   }
 
   sendChallenge(){
-    const challenge = {username: this.whitePlayer.username, timeLimit: this.timeLimit, maxRounds: this.roundLimit, row1: this.row1, row2: this.row2};
+    const challenge = {username: this.whitePlayer.username, timeLimit: this.timeLimit, roundLimit: this.roundLimit, row1: this.row1, row2: this.row2};
     this.blackPlayer.socket.emit('challenge', challenge);
   }
 
@@ -54,7 +54,7 @@ module.exports = class ChessInstance{
     let game = this.game;
     let io = this.io;
 
-    this.timeLimit = 2; // Todo: remove this test value
+    //this.timeLimit = 2; // Todo: remove this test value
 
     // Clear possible previous intervals (example: if a new game has been started)
     this.clearInterval();
