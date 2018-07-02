@@ -122,6 +122,15 @@ function chessWebsocket(io){
         callback(cb, e)
       }
     });
+
+    socket.on('resign', (cb) => {
+      const game = socket.user.game;
+      if(!game){
+        callback(cb, 'game-does-not-exist');
+        return;
+      }
+      game.resign(game.getOpponent(socket.user));      
+    })
     
     socket.on('get-state', function(cb){
       callback(cb, getLobbyUsers());

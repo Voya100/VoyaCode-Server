@@ -116,8 +116,11 @@ class ChessGame {
     const piece = this.board[yStart][xStart].piece;
     const target = this.board[yEnd][xEnd];
     // TODO: Error handling
-    
+    if(piece == null){
+      console.log('error: piece == null', xStart, yStart, xEnd, yEnd, this.state);
+    }
     if(piece.color !== this.state.activePlayer){
+      console.log('error: not your turn', xStart, yStart, xEnd, yEnd, piece.color, piece.state, this.state);
       throw new Error('not-your-turn');
     }
 
@@ -125,7 +128,7 @@ class ChessGame {
 
     this.movePiece(piece, target);
     this.latestMove = move;
-    
+
     this.changeTurn();
     this.checkIfGameHasEnded();
 
@@ -133,10 +136,17 @@ class ChessGame {
   }
 
   makeRandomMove(){
-    console.log('random move count', this.activePlayer.allMoves.length)
-    const {piece, tile} = _.sample(this.activePlayer.legalMoves);
-    console.log('random move', {id: piece.id, x: tile.x, y: tile.y})
-    return this.makeMove({xStart: piece.x, xEnd: tile.x, yStart: piece.y, yEnd: tile.y});
+    try{
+      const {piece, tile} = _.sample(this.activePlayer.legalMoves);
+      console.log('random: active', this.state.activePlayer, piece.state, tile.x, tile.y)
+      return this.makeMove({xStart: piece.x, xEnd: tile.x, yStart: piece.y, yEnd: tile.y});
+    }catch(e){
+      console.log('error');
+      console.log('random: active', this.state.activePlayer)
+      console.log('state', this.state);
+      console.log('legal moves', this.activePlayer.legalMoves);
+      throw e;
+    }
   }
 
   movePiece(piece, target){
@@ -146,8 +156,13 @@ class ChessGame {
     piece.move(target.x, target.y);
   }
 
+  resign(){
+    this.state.winner = this.activePlayer === 'white' ? 'black' : 'white';
+  }
+
   changeTurn(){
     this.state.activePlayer = this.state.activePlayer === 'white' ? 'black' : 'white';
+    console.log('change turn', this.state.activePlayer)
     if(this.state.activePlayer === 'white'){
       this.state.round++;
     }
@@ -160,6 +175,7 @@ class ChessGame {
 
   removePiece(id){
     const piece = this.pieces[id];
+    console.log('remove piece', id, piece.state);
     this.state.pieces[id] = undefined;
     this.pieces[id] = undefined;
     const player = piece.isWhite() ? this.whitePlayer : this.blackPlayer;

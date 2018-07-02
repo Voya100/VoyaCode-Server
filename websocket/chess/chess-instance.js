@@ -37,6 +37,11 @@ module.exports = class ChessInstance{
     this.blackPlayer.socket.emit('challenge', challenge);
   }
 
+  resign(playerColor){
+    this.io.to(this.id).emit('resign', {resigner: playerColor});
+    this.endGame();
+  }
+
   endGame(){
     this.hasEnded = true;
     this.clearInterval();
