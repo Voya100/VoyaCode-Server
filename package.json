@@ -1,54 +1,59 @@
 {
   "name": "server",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Server for Voya Code",
-  "main": "server.js",
-  "scripts": {
-    "start": "set PORT=8000 && concurrently \"nodemon --watch ./ server.js --watch ./.config\" \"npm run open-browser\" ",
-    "open-browser": "browser-sync start --proxy http://localhost:8000 --reload-delay 200 --browser \"chrome\" --files ../public/index.html",
-    "test": "cross-env NODE_ENV=test && mocha",
-    "test-cover": "istanbul cover _mocha $(find \"*.spec.js\" -not -path \"./node_modules/*\")"
-  },
   "author": "Voya",
-  "license": "ISC",
-  "engines": {
-    "node": ">=7.0.0"
+  "scripts": {
+    "format": "prettier --write \"**/*.ts\"",
+    "start": "ts-node -r tsconfig-paths/register src/main.ts",
+    "start:dev": "nodemon",
+    "prestart:prod": "rm -rf dist && tsc",
+    "start:prod": "node dist/main.js",
+    "start:hmr": "node dist/server",
+    "test": "jest",
+    "test:cov": "jest --coverage",
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "webpack": "webpack --config webpack.config.js"
   },
-  "env": [
-    "node",
-    "mocha"
-  ],
   "dependencies": {
-    "bluebird": "^3.5.0",
-    "body-parser": "~1.5.2",
-    "chai": "^3.5.0",
-    "express": "^4.15.3",
-    "jsonwebtoken": "^7.4.3",
-    "lodash": "^4.17.4",
-    "mailgun-js": "^0.13.1",
-    "moment": "^2.18.1",
-    "moment-timezone": "^0.5.13",
-    "morgan": "^1.2.3",
-    "node-cache": "^4.1.1",
-    "pg": "^6.1.0",
-    "pg-promise": "^5.9.7",
-    "request": "^2.81.0",
-    "rss": "^1.2.2",
-    "socket.io": "^2.0.3",
-    "url-crypt": "^1.2.1",
-    "uuid": "^3.1.0"
+    "@nestjs/common": "^5.0.0",
+    "@nestjs/core": "^5.0.0",
+    "fastify-formbody": "^2.0.0",
+    "reflect-metadata": "^0.1.12",
+    "rxjs": "^6.0.0",
+    "typescript": "^2.6.2"
   },
   "devDependencies": {
-    "browser-sync": "^2.18.13",
-    "concurrently": "^3.5.0",
-    "cross-env": "^5.0.5",
-    "eslint": "^4.6.0",
-    "eslint-plugin-mocha": "^4.11.0",
-    "eslint-plugin-node": "^5.1.1",
-    "eslint-plugin-security": "^1.4.0",
-    "istanbul": "^0.4.5",
-    "mocha": "^3.5.3",
-    "sinon": "^4.0.0",
-    "sinon-chai": "^2.14.0"
+    "@nestjs/testing": "^5.0.0",
+    "@types/express": "^4.0.39",
+    "@types/jest": "^21.1.8",
+    "@types/node": "^9.3.0",
+    "@types/supertest": "^2.0.4",
+    "jest": "^21.2.1",
+    "nodemon": "^1.14.1",
+    "prettier": "^1.11.1",
+    "supertest": "^3.0.0",
+    "ts-jest": "^21.2.4",
+    "ts-loader": "^4.1.0",
+    "ts-node": "^4.1.0",
+    "tsconfig-paths": "^3.1.1",
+    "tslint": "5.3.2",
+    "tslint-eslint-rules": "^5.3.1",
+    "webpack": "^4.2.0",
+    "webpack-cli": "^2.0.13",
+    "webpack-node-externals": "^1.6.0"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".spec.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "coverageDirectory": "../coverage"
   }
 }
