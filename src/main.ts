@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import * as morgan from 'morgan';
 import { join } from 'path';
 import { AppModule } from './app.module';
+import { BadRequestExceptionFilter } from './common/exception-filters/bad-request-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: console });
@@ -20,6 +21,7 @@ async function bootstrap() {
     })
   );
   app.useStaticAssets(join(__dirname, '../../public'));
+  app.useGlobalFilters(new BadRequestExceptionFilter());
 
   await app.listen(process.env.port || 8080);
 }
