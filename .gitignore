@@ -1,3 +1,4 @@
 node_modules/
+coverage/
 
 src/core/server-config/config.production.ts
