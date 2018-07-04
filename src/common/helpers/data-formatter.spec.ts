@@ -129,5 +129,14 @@ describe('DataFormatter', () => {
     it('should replace line breaks', () => {
       testTagsToHtml('Line1\nLine2', 'Line1<br>Line2');
     });
+    it('should not convert [color] tags that include " or ; characters in color', () => {
+      testTagsToHtml(
+        '[color=black;]Color[/color][color=black"]Color[/color]',
+        '[color=black;]Color[/color][color=black"]Color[/color]'
+      );
+    });
+    it('should not convert [url] tags that include " characters in url', () => {
+      testTagsToHtml('[url="]url[/url]', '[url="]url[/url]');
+    });
   });
 });

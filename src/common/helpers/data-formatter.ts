@@ -23,11 +23,11 @@ export class DataFormatter {
     text = text.replace(/\n/g, '<br>');
     text = tagsToReplace.reduce((txt, tag) => replaceTag(tag, txt), text);
 
-    let tag = /\[url=(.*?)\](.*?)\[\/url\]/gi;
+    let tag = /\[url=([^"]*?)\](.*?)\[\/url\]/gi;
     let tagRep = '<a href="$1">$2</a>';
     text = text.replace(tag, tagRep);
 
-    tag = /\[color=(.*?)\](.*?)\[\/color\]/gi;
+    tag = /\[color=([^";]*?)\](.*?)\[\/color\]/gi;
     tagRep = '<span style="color:$1">$2</span>';
     text = text.replace(tag, tagRep);
 
@@ -38,7 +38,10 @@ export class DataFormatter {
 // Replaces tags that use format [tagname]{conent}[/tagname] with similar HTML tags
 // (<tagname>{content}</tagname>)
 function replaceTag(tagName: string, text: string) {
-  const regex = RegExp('\\[' + tagName + '\\](.*?)\\[/' + tagName + '\\]', 'g');
+  const regex = RegExp(
+    '\\[' + tagName + '\\](.*?)\\[/' + tagName + '\\]',
+    'gi'
+  );
   const tagRep = '<' + tagName + '>$1</' + tagName + '>';
   return text.replace(regex, tagRep);
 }
