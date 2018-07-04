@@ -11,7 +11,7 @@ const devConfig = {
     username: 'postgres',
     password: 'postgres',
     entities: ['src/**/**.entity{.ts,.js}'],
-    synchronize: true,
+    synchronize: false,
     migrations: ['migration/*.js'],
     migrationsRun: true,
     cli: {
@@ -21,7 +21,8 @@ const devConfig = {
     }
   },
   tokenSecret: '4cdddef5-e507-4499-ad5d-29feff6d25c1',
-  // Stored in configs because there is only 1 user - if more users are added, a database would be more appropriate storing location
+  // Stored in configs because there is only 1 user
+  // if more users are added, a database would be more appropriate storing location
   users: {
     admin: {
       username: 'Admin',

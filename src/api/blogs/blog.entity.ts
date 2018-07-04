@@ -1,16 +1,4 @@
-import {
-  Column,
-  Entity,
-  Index,
-  JoinColumn,
-  JoinTable,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  OneToOne,
-  PrimaryColumn,
-  RelationId
-} from 'typeorm';
+import { Column, Entity } from 'typeorm';
 
 @Entity('blogs', { schema: 'public' })
 export class Blog {
