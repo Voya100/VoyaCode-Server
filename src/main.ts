@@ -1,6 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import * as morgan from 'morgan';
+import morgan from 'morgan';
 import { join } from 'path';
 import { AppModule } from './app.module';
 import { BadRequestExceptionFilter } from './common/exception-filters/bad-request-exception.filter';

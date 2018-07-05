@@ -12,15 +12,16 @@
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "esModuleInterop": true,
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./src",
+    "typeRoots": ["node_modules/@types"],
     "paths": {
       "@api/*": ["api/*"],
       "@core/*": ["core/*"],
       "@common": ["common/*"]
     }
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "**/*.spec.ts"]
+  "exclude": ["node_modules"]
 }
