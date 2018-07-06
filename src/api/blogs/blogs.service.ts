@@ -19,7 +19,7 @@ export class BlogsService {
   }
 
   async getBlog(id: number) {
-    return await this.blogs.findOne(id);
+    return await this.blogs.findOneOrFail(id);
   }
 
   async addBlog(name: string, text: string) {
