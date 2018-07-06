@@ -10,6 +10,10 @@ export class AnyExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse();
     const status = exception.status || 500;
 
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(exception);
+    }
+
     response.status(status).json({
       statusCode: status,
       message: exception.message || 'Server error'
