@@ -160,4 +160,38 @@ describe('BlogController (e2e)', () => {
     // TODO:
     it('should not post a blog from unauthenticated user');
   });
+
+  describe('PUT /api/blogs/:id', async () => {
+    it('should edit a blog', async () => {
+      await blogRepository.insert(rawBlogs);
+      const blog = await blogRepository.findOne();
+      const updatedBlog = { id: blog.id, text: 'new-text', name: 'new-name' };
+      await request(app.getHttpServer())
+        .put('/api/blogs/' + blog.id)
+        .send({ text: updatedBlog.text, name: updatedBlog.name })
+        .expect(200)
+        .expect({
+          data: { ...blog, ...updatedBlog, date: blog.date.toISOString() },
+          message: 'Blog edited successfully.'
+        });
+      const blogFromDb = await blogRepository.findOneOrFail(updatedBlog);
+      // Release date should stay the same
+      expect(blogFromDb.date).toEqual(blog.date);
+    });
+
+    it('should not edit a blog with name that is too long', async () => {
+      await blogRepository.insert(rawBlogs);
+      const blog = await blogRepository.findOne();
+      const longName = 'a'.repeat(256);
+      const updatedBlog = { id: blog.id, text: 'new-text', name: longName };
+      await request(app.getHttpServer())
+        .post('/api/blogs')
+        .send(updatedBlog)
+        .expect(400);
+      await blogRepository.findOneOrFail(blog);
+    });
+
+    // TODO:
+    it('should not post a blog from unauthenticated user');
+  });
 });

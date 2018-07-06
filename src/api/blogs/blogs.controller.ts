@@ -79,7 +79,7 @@ export class BlogsController {
   ) {
     const blog = await this.blogs.editBlog(id, name, text);
     return {
-      message: 'Blog added successfully.',
+      message: 'Blog edited successfully.',
       data: blog
     };
   }
