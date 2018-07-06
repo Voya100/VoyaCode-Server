@@ -23,8 +23,8 @@ async function bootstrap() {
   );
   app.useStaticAssets(join(__dirname, '../../public'));
   app.useGlobalFilters(
-    new BadRequestExceptionFilter(),
-    new AnyExceptionFilter()
+    new AnyExceptionFilter(),
+    new BadRequestExceptionFilter()
   );
 
   await app.listen(process.env.port || 8080);

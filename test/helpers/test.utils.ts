@@ -25,7 +25,7 @@ export function applyGlobalsToApp(app: INestApplication) {
     })
   );
   app.useGlobalFilters(
-    new BadRequestExceptionFilter(),
-    new AnyExceptionFilter()
+    new AnyExceptionFilter(),
+    new BadRequestExceptionFilter()
   );
 }
