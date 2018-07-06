@@ -86,7 +86,7 @@ describe('BlogController (e2e)', () => {
         .get('/api/blogs?limit=2')
         .expect(200)
         .expect({ data: expectedData.slice(0, 2) });
-  });
+    });
 
     it('should return max number of blogs if limit is higher than that', async () => {
       const inserts = await blogRepository.insert(rawBlogs);
@@ -232,6 +232,46 @@ describe('BlogController (e2e)', () => {
     });
 
     // TODO:
-    it('should not post a blog from unauthenticated user');
+    it('should not edit a blog if user is unauthenticated');
+
+    it('should return 404 when id does not exist', () => {
+      return request(app.getHttpServer())
+        .put('/api/blogs/1')
+        .send({ text: 'text', name: 'name' })
+        .expect(404)
+        .expect({
+          statusCode: 404,
+          error: 'Not Found',
+          message: 'Blog does not exist.'
+        });
+    });
+  });
+
+  describe('DELETE /api/blogs/:id', async () => {
+    it('should delete a blog', async () => {
+      await blogRepository.insert(rawBlogs);
+      const blog = await blogRepository.findOne();
+      await request(app.getHttpServer())
+        .delete('/api/blogs/' + blog.id)
+        .expect(200)
+        .expect({
+          message: 'Blog deleted successfully.'
+        });
+      expect(await blogRepository.findOne(blog.id)).toBeUndefined();
+    });
+
+    // TODO:
+    it('should not delete a blog if user is unauthenticated');
+
+    it('should return 404 when id does not exist', () => {
+      return request(app.getHttpServer())
+        .delete('/api/blogs/1')
+        .expect(404)
+        .expect({
+          statusCode: 404,
+          error: 'Not Found',
+          message: 'Blog does not exist.'
+        });
+    });
   });
 });
