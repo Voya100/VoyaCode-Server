@@ -1,19 +1,18 @@
-import { Column, Entity } from 'typeorm';
+import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('blogs', { schema: 'public' })
 export class Blog {
-  @Column('integer', {
-    generated: true,
-    nullable: false,
-    primary: true,
-    name: 'id'
-  })
-  id: number;
+  @PrimaryGeneratedColumn() id: number;
 
   @Column('character varying', {
     nullable: false,
     length: 255,
     name: 'name'
+  })
+  @IsString({ message: 'Name must be a string.' })
+  @MaxLength(255, {
+    message: "Name can't be longer than  $constraint1 characters."
   })
   name: string;
 
@@ -21,6 +20,8 @@ export class Blog {
     nullable: false,
     name: 'text'
   })
+  @IsString({ message: 'Text must be a string.' })
+  @IsNotEmpty({ message: 'Text content is required.' })
   text: string;
 
   @Column('timestamp without time zone', {
