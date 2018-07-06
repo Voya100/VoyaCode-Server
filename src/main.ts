@@ -2,6 +2,7 @@ import { AnyExceptionFilter } from '@common/exception-filters/any-exception.filt
 import { BadRequestExceptionFilter } from '@common/exception-filters/bad-request-exception.filter';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import helmet from 'helmet';
 import morgan from 'morgan';
 import { join } from 'path';
 import { AppModule } from './app.module';
@@ -9,6 +10,11 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: console });
 
+  app.use(
+    helmet({
+      frameguard: false
+    })
+  );
   app.use(morgan('dev'));
 
   app.useGlobalPipes(
