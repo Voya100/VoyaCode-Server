@@ -76,6 +76,8 @@
     "no-implicit-dependencies": false,
     "switch-default": false,
     "prefer-function-over-method": false,
-    "trailing-comma": false
+    "trailing-comma": false,
+    "max-classes-per-file": false,
+    "arrow-parens": false
   }
 }
