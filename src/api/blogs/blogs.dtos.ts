@@ -23,3 +23,11 @@ export class AddBlogDto {
 }
 
 export class EditBlogDto extends AddBlogDto {}
+
+export class PreviewBlogDto extends AddBlogDto {
+  @Type(() => Number)
+  readonly id?: number;
+
+  @Type(() => Date)
+  readonly date?: Date;
+}

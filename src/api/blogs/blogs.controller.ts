@@ -13,7 +13,12 @@ import {
   UseFilters
 } from '@nestjs/common';
 import { Blog } from './blog.entity';
-import { AddBlogDto, BlogIdParamDto, GetBlogsDto } from './blogs.dtos';
+import {
+  AddBlogDto,
+  BlogIdParamDto,
+  GetBlogsDto,
+  PreviewBlogDto
+} from './blogs.dtos';
 import { BlogsService } from './blogs.service';
 
 @Controller('api/blogs')
@@ -69,6 +74,18 @@ export class BlogsController {
       message: 'Blog added successfully.',
       data: blog
     };
+  }
+
+  // Returns formatted version of the blog
+  @Post('preview')
+  async previewBlog(@Body()
+  {
+    name,
+    text,
+    id = 1,
+    date = new Date()
+  }: PreviewBlogDto) {
+    return { data: BlogsController.formatBlogResult({ id, name, text, date }) };
   }
 
   @Put(':id')

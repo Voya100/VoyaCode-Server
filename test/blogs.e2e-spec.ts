@@ -201,6 +201,24 @@ describe('BlogController (e2e)', () => {
     it('should not post a blog from unauthenticated user');
   });
 
+  describe('POST /api/blogs/preview', () => {
+    it('should return a formatted version of the blog', async () => {
+      const blog = rawBlogs[0];
+      const formattedBlog = formattedBlogs[0];
+      await request(app.getHttpServer())
+        .post('/api/blogs/preview')
+        .send({ text: blog.text, name: blog.name })
+        .expect(201)
+        .expect((response: Response) => {
+          const { data } = response.body;
+          expect(data.name).toBe(formattedBlog.name);
+          expect(data.text).toBe(formattedBlog.text);
+          expect(data.id).toBeDefined();
+          expect(data.date).toBeDefined();
+        });
+    });
+  });
+
   describe('PUT /api/blogs/:id', async () => {
     it('should edit a blog', async () => {
       await blogRepository.insert(rawBlogs);
