@@ -12,7 +12,7 @@ const devConfig = {
     password: 'postgres',
     entities: ['src/**/**.entity{.ts,.js}'],
     synchronize: false,
-    migrations: ['migration/*.js'],
+    migrations: ['migration/*.ts'],
     migrationsRun: true,
     cli: {
       entitiesDir: 'entity',

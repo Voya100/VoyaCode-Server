@@ -10,9 +10,9 @@ export interface ServerConfig {
     password: string;
     entities: string[];
     synchronize: boolean;
-    migrations: string[];
-    migrationsRun: boolean;
-    cli: {
+    migrations?: string[];
+    migrationsRun?: boolean;
+    cli?: {
       entitiesDir: string;
       migrationsDir: string;
       subscribersDir: string;
