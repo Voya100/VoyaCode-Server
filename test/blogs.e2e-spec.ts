@@ -1,21 +1,16 @@
 import { Blog } from '@api/blogs/blog.entity';
 import { INestApplication } from '@nestjs/common';
-import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import request from 'supertest';
 import { Repository } from 'typeorm';
-import { AppModule } from './../src/app.module';
+import { generateApp } from './helpers/test.utils';
 
 describe('BlogController (e2e)', () => {
   let app: INestApplication;
   let blogRepository: Repository<Blog>;
 
   beforeAll(async () => {
-    const moduleFixture = await Test.createTestingModule({
-      imports: [AppModule]
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
+    app = await generateApp();
     blogRepository = app.get(getRepositoryToken(Blog));
     await app.init();
   });
