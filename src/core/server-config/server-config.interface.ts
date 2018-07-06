@@ -18,11 +18,15 @@ export interface ServerConfig {
       subscribersDir: string;
     };
   };
-  tokenSecret: string;
+  jwt: {
+    tokenSecret: string;
+    expiryTime: number | string;
+  };
+  // Only for admin account(s)
   users: {
-    admin: {
+    [username: string]: {
       username: string;
-      admin: boolean;
+      role: string;
       password: string;
     };
   };

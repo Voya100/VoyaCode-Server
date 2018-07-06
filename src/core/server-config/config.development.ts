@@ -20,13 +20,16 @@ const devConfig = {
       subscribersDir: 'subscriber'
     }
   },
-  tokenSecret: '4cdddef5-e507-4499-ad5d-29feff6d25c1',
+  jwt: {
+    tokenSecret: '4cdddef5-e507-4499-ad5d-29feff6d25c1',
+    expiryTime: '1h'
+  },
   // Stored in configs because there is only 1 user
   // if more users are added, a database would be more appropriate storing location
   users: {
-    admin: {
+    Admin: {
       username: 'Admin',
-      admin: true,
+      role: 'admin',
       password: 'test-password'
     }
   },

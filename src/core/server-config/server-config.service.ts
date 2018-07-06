@@ -22,8 +22,13 @@ export class ServerConfigService implements ServerConfig {
   };
   env: string;
   port?: number;
-  tokenSecret: string;
-  users: { admin: { username: string; admin: boolean; password: string } };
+  jwt: {
+    tokenSecret: string;
+    expiryTime: number;
+  };
+  users: {
+    [username: string]: { username: string; role: string; password: string };
+  };
   mailgun: { apiKey: string; domain: string };
   encryptPassword: string;
   constructor(environment: string) {
