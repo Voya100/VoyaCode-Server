@@ -52,6 +52,16 @@ export class BlogsController {
     };
   }
 
+  // Returns blog without tag -> Html conversion
+  @Get('raw/:id')
+  @UseFilters(new EntityNotFoundFilter('Blog does not exist.'))
+  async getRawBlog(@Param() { id }: BlogIdParamDto) {
+    const blog = await this.blogs.getBlog(id);
+    return {
+      data: blog
+    };
+  }
+
   @Post()
   async addBlog(@Body() { name, text }: AddBlogDto) {
     const blog = await this.blogs.addBlog(name, text);

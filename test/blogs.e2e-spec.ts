@@ -2,6 +2,7 @@ import { Blog } from '@api/blogs/blog.entity';
 import { INestApplication } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import request from 'supertest';
+import { Response } from 'supertest';
 import { Repository } from 'typeorm';
 import { generateApp } from './helpers/test.utils';
 
@@ -86,6 +87,29 @@ describe('BlogController (e2e)', () => {
         .expect(200)
         .expect({
           data: { id: blog.id, ...formattedBlogs[0] }
+        });
+    });
+  });
+  describe('GET /api/blogs/raw/:id', () => {
+    it('should return 404 when id does not exist', () => {
+      return request(app.getHttpServer())
+        .get('/api/blogs/raw/1')
+        .expect(404)
+        .expect({
+          statusCode: 404,
+          error: 'Not Found',
+          message: 'Blog does not exist.'
+        });
+    });
+
+    it('should return unformatted blog result', async () => {
+      await blogRepository.insert(rawBlogs);
+      const blog = await blogRepository.findOne();
+      return request(app.getHttpServer())
+        .get('/api/blogs/raw/' + blog.id)
+        .expect(200)
+        .expect({
+          data: { ...blog, date: blog.date.toISOString() }
         });
     });
   });
