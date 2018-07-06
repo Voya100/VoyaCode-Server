@@ -4,7 +4,7 @@ import { EntityNotFoundError } from 'typeorm/error/EntityNotFoundError';
 /**
  * Catches EntityNotFound errors and return 404 message
  */
-@Catch()
+@Catch(EntityNotFoundError)
 export class EntityNotFoundFilter implements ExceptionFilter {
   constructor(private message: string) {}
   catch(_exception: EntityNotFoundError, host: ArgumentsHost) {
