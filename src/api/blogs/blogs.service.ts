@@ -17,4 +17,27 @@ export class BlogsService {
       }
     });
   }
+
+  async getBlog(id: number) {
+    return await this.blogs.findOne(id);
+  }
+
+  async addBlog(name: string, text: string) {
+    const blog = new Blog();
+    blog.name = name;
+    blog.text = text;
+    return await this.blogs.save(blog);
+  }
+
+  async editBlog(id: number, name: string, text: string) {
+    const blog = await this.blogs.findOneOrFail(id);
+    blog.name = name;
+    blog.text = text;
+    return await this.blogs.save(blog);
+  }
+
+  async deleteBlog(id: number) {
+    const blog = await this.blogs.findOneOrFail(id);
+    return await this.blogs.remove(blog);
+  }
 }
