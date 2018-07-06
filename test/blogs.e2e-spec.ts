@@ -30,6 +30,11 @@ describe('BlogController (e2e)', () => {
       name: 'Blog2',
       text: 'Blog 2 description',
       date: new Date('2018-07-11T19:22:10.152Z')
+    },
+    {
+      name: 'Blog3',
+      text: 'Blog 3: [url=/my-url]Link[/url]',
+      date: new Date('2019-10-15T19:22:10.152Z')
     }
   ];
   const formattedBlogs = [
@@ -44,6 +49,12 @@ describe('BlogController (e2e)', () => {
       text: 'Blog 2 description',
       date: '11.07.2018',
       year: 2018
+    },
+    {
+      name: 'Blog3',
+      text: 'Blog 3: <a href="/my-url">Link</a>',
+      date: '15.10.2019',
+      year: 2019
     }
   ];
 
@@ -64,6 +75,35 @@ describe('BlogController (e2e)', () => {
         .get('/api/blogs')
         .expect(200)
         .expect({ data: expectedData });
+    });
+
+    it('should return number of blogs that matches the limit param', async () => {
+      const inserts = await blogRepository.insert(rawBlogs);
+      const expectedData = inserts.identifiers
+        .map((id, i) => ({ ...id, ...formattedBlogs[i] }))
+        .reverse();
+      return request(app.getHttpServer())
+        .get('/api/blogs?limit=2')
+        .expect(200)
+        .expect({ data: expectedData.slice(0, 2) });
+  });
+
+    it('should return max number of blogs if limit is higher than that', async () => {
+      const inserts = await blogRepository.insert(rawBlogs);
+      const expectedData = inserts.identifiers
+        .map((id, i) => ({ ...id, ...formattedBlogs[i] }))
+        .reverse();
+      return request(app.getHttpServer())
+        .get('/api/blogs?limit=999')
+        .expect(200)
+        .expect({ data: expectedData });
+    });
+
+    it('should return 400 if limit is negative', async () => {
+      await blogRepository.insert(rawBlogs);
+      return request(app.getHttpServer())
+        .get('/api/blogs?limit=-999')
+        .expect(400);
     });
   });
 
