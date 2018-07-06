@@ -13,12 +13,12 @@ export class BadRequestExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse();
 
-    let message;
+    let message: any;
     const errorMessage = exception.message.message;
     if (errorMessage && errorMessage[0] instanceof ValidationError) {
       message = [];
       // Get all constraint description messages and put into array
-      errorMessage.forEach(property => {
+      errorMessage.forEach((property: ValidationError) => {
         Object.keys(property.constraints).forEach(key => {
           message.push(property.constraints[key]);
         });
