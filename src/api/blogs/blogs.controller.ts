@@ -10,8 +10,10 @@ import {
   Post,
   Put,
   Query,
-  UseFilters
+  UseFilters,
+  UseGuards
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { Blog } from './blog.entity';
 import {
   AddBlogDto,
@@ -68,6 +70,7 @@ export class BlogsController {
   }
 
   @Post()
+  @UseGuards(AuthGuard('jwt'))
   async addBlog(@Body() { name, text }: AddBlogDto) {
     const blog = await this.blogs.addBlog(name, text);
     return {
@@ -89,6 +92,7 @@ export class BlogsController {
   }
 
   @Put(':id')
+  @UseGuards(AuthGuard('jwt'))
   @UseFilters(new EntityNotFoundFilter('Blog does not exist.'))
   async editBlog(
     @Param() { id }: BlogIdParamDto,
@@ -102,6 +106,7 @@ export class BlogsController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
   @UseFilters(new EntityNotFoundFilter('Blog does not exist.'))
   async deleteBlog(@Param() { id }: BlogIdParamDto) {
     await this.blogs.deleteBlog(id);

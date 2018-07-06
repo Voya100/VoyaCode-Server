@@ -4,15 +4,17 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import request from 'supertest';
 import { Response } from 'supertest';
 import { Repository } from 'typeorm';
-import { generateApp } from './helpers/test.utils';
+import { generateApp, getAuthHeader } from './helpers/test.utils';
 
 describe('BlogController (e2e)', () => {
   let app: INestApplication;
   let blogRepository: Repository<Blog>;
+  let authHeader: string;
 
   beforeAll(async () => {
     app = await generateApp();
     blogRepository = app.get(getRepositoryToken(Blog));
+    authHeader = await getAuthHeader(app, 'Admin', 'admin');
     await app.init();
   });
 
@@ -160,6 +162,7 @@ describe('BlogController (e2e)', () => {
       let id: number;
       await request(app.getHttpServer())
         .post('/api/blogs')
+        .set('Authorization', authHeader)
         .send({ text: blog.text, name: blog.name })
         .expect(201)
         .expect((response: Response) => {
@@ -179,6 +182,7 @@ describe('BlogController (e2e)', () => {
       const longName = 'a'.repeat(256);
       await request(app.getHttpServer())
         .post('/api/blogs')
+        .set('Authorization', authHeader)
         .send({ text: blog.text, name: longName })
         .expect(400)
         .expect({
@@ -193,12 +197,24 @@ describe('BlogController (e2e)', () => {
       const blog = rawBlogs[0];
       await request(app.getHttpServer())
         .post('/api/blogs')
+        .set('Authorization', authHeader)
         .send({ text: blog.text })
         .expect(400);
       expect(await blogRepository.count()).toBe(0);
     });
-    // TODO:
-    it('should not post a blog from unauthenticated user');
+
+    it('should not post a blog from unauthenticated user', async () => {
+      const blog = rawBlogs[0];
+      await request(app.getHttpServer())
+        .post('/api/blogs')
+        .send({ name: blog.name, text: blog.text })
+        .expect(401)
+        .expect({
+          statusCode: 401,
+          error: 'Unauthorized',
+          message: 'You need to be logged in to proceed.'
+        });
+    });
   });
 
   describe('POST /api/blogs/preview', () => {
@@ -226,6 +242,7 @@ describe('BlogController (e2e)', () => {
       const updatedBlog = { id: blog.id, text: 'new-text', name: 'new-name' };
       await request(app.getHttpServer())
         .put('/api/blogs/' + blog.id)
+        .set('Authorization', authHeader)
         .send({ text: updatedBlog.text, name: updatedBlog.name })
         .expect(200)
         .expect({
@@ -241,20 +258,30 @@ describe('BlogController (e2e)', () => {
       await blogRepository.insert(rawBlogs);
       const blog = await blogRepository.findOne();
       const longName = 'a'.repeat(256);
-      const updatedBlog = { id: blog.id, text: 'new-text', name: longName };
+      const updatedBlog = { text: 'new-text', name: longName };
       await request(app.getHttpServer())
-        .post('/api/blogs')
+        .put('/api/blogs/' + blog.id)
+        .set('Authorization', authHeader)
         .send(updatedBlog)
         .expect(400);
       await blogRepository.findOneOrFail(blog);
     });
 
-    // TODO:
-    it('should not edit a blog if user is unauthenticated');
+    it('should not edit a blog if user is unauthenticated', async () => {
+      await blogRepository.insert(rawBlogs);
+      const blog = await blogRepository.findOne();
+      const updatedBlog = { text: 'new-text', name: 'name' };
+      await request(app.getHttpServer())
+        .put('/api/blogs/' + blog.id)
+        .send(updatedBlog)
+        .expect(401);
+      await blogRepository.findOneOrFail(blog);
+    });
 
     it('should return 404 when id does not exist', () => {
       return request(app.getHttpServer())
         .put('/api/blogs/1')
+        .set('Authorization', authHeader)
         .send({ text: 'text', name: 'name' })
         .expect(404)
         .expect({
@@ -271,6 +298,7 @@ describe('BlogController (e2e)', () => {
       const blog = await blogRepository.findOne();
       await request(app.getHttpServer())
         .delete('/api/blogs/' + blog.id)
+        .set('Authorization', authHeader)
         .expect(200)
         .expect({
           message: 'Blog deleted successfully.'
@@ -278,12 +306,18 @@ describe('BlogController (e2e)', () => {
       expect(await blogRepository.findOne(blog.id)).toBeUndefined();
     });
 
-    // TODO:
-    it('should not delete a blog if user is unauthenticated');
+    it('should not delete a blog if user is unauthenticated', async () => {
+      await blogRepository.insert(rawBlogs);
+      const blog = await blogRepository.findOne();
+      await request(app.getHttpServer())
+        .delete('/api/blogs/' + blog.id)
+        .expect(401);
+    });
 
     it('should return 404 when id does not exist', () => {
       return request(app.getHttpServer())
         .delete('/api/blogs/1')
+        .set('Authorization', authHeader)
         .expect(404)
         .expect({
           statusCode: 404,

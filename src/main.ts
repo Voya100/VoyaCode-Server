@@ -1,5 +1,6 @@
 import { AnyExceptionFilter } from '@common/exception-filters/any-exception.filter';
 import { BadRequestExceptionFilter } from '@common/exception-filters/bad-request-exception.filter';
+import { UnauthorizedExceptionFilter } from '@common/exception-filters/unauthorized-exception.filter';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import helmet from 'helmet';
@@ -30,7 +31,8 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '../../public'));
   app.useGlobalFilters(
     new AnyExceptionFilter(),
-    new BadRequestExceptionFilter()
+    new BadRequestExceptionFilter(),
+    new UnauthorizedExceptionFilter()
   );
 
   await app.listen(process.env.port || 8080);

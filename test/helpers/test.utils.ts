@@ -1,7 +1,9 @@
 import { AnyExceptionFilter } from '@common/exception-filters/any-exception.filter';
 import { BadRequestExceptionFilter } from '@common/exception-filters/bad-request-exception.filter';
+import { UnauthorizedExceptionFilter } from '@common/exception-filters/unauthorized-exception.filter';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { AuthService } from '../../src/api/auth/auth.service';
 import { AppModule } from '../../src/app.module';
 
 export async function generateApp() {
@@ -26,6 +28,16 @@ export function applyGlobalsToApp(app: INestApplication) {
   );
   app.useGlobalFilters(
     new AnyExceptionFilter(),
-    new BadRequestExceptionFilter()
+    new BadRequestExceptionFilter(),
+    new UnauthorizedExceptionFilter()
   );
+}
+
+export async function getAuthHeader(
+  app: INestApplication,
+  username: string,
+  role: string
+) {
+  const auth: AuthService = app.get(AuthService);
+  return 'Bearer ' + (await auth.createToken(username, role));
 }
