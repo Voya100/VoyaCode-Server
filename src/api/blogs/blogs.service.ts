@@ -1,3 +1,4 @@
+import { validateEntity } from '@common/helpers/database-helpers';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -26,6 +27,7 @@ export class BlogsService {
     const blog = new Blog();
     blog.name = name;
     blog.text = text;
+    await validateEntity(blog);
     return await this.blogs.save(blog);
   }
 
@@ -33,6 +35,7 @@ export class BlogsService {
     const blog = await this.blogs.findOneOrFail(id);
     blog.name = name;
     blog.text = text;
+    await validateEntity(blog);
     return await this.blogs.save(blog);
   }
 
