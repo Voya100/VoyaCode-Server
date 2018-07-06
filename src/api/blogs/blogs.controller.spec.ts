@@ -15,13 +15,13 @@ describe('Blogs Controller', () => {
       id: 1,
       name: 'Blog1',
       text: 'Blog 1 [b]description[/b]',
-      date: '2018-07-01T19:22:10.152Z'
+      date: new Date('2018-07-01T19:22:10.152Z')
     },
     {
       id: 2,
       name: 'Blog2',
       text: 'Blog 2 description',
-      date: '2018-07-11T19:22:10.152Z'
+      date: new Date('2018-07-11T19:22:10.152Z')
     }
   ];
   const formattedBlogs: BlogResult[] = [
@@ -40,7 +40,7 @@ describe('Blogs Controller', () => {
       year: 2018
     }
   ];
-  const formattedResponse = { status: 'success', data: formattedBlogs };
+  const formattedResponse = { data: formattedBlogs };
 
   it('should be defined', () => {
     expect(blogsController).toBeDefined();
@@ -54,10 +54,9 @@ describe('Blogs Controller', () => {
       expect(getBlogsSpy).toHaveBeenCalledWith({});
     });
     it('should return a single blog when using limit', async () => {
-      const getBlogsSpy = jest.fn().mockReturnValue(rawBlogs[0]);
+      const getBlogsSpy = jest.fn().mockReturnValue([rawBlogs[0]]);
       blogsService.getBlogs = getBlogsSpy;
       expect(await blogsController.getBlogs({ limit: 1 })).toEqual({
-        status: 'success',
         data: [formattedBlogs[0]]
       });
       expect(getBlogsSpy).toHaveBeenCalledWith({ limit: 1 });
