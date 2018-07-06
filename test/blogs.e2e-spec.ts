@@ -113,4 +113,51 @@ describe('BlogController (e2e)', () => {
         });
     });
   });
+
+  describe('POST /api/blogs', () => {
+    it('should post a blog', async () => {
+      const blog = rawBlogs[0];
+      let id: number;
+      await request(app.getHttpServer())
+        .post('/api/blogs')
+        .send({ text: blog.text, name: blog.name })
+        .expect(201)
+        .expect((response: Response) => {
+          const { data } = response.body;
+          id = data.id;
+          expect(data.name).toBe(blog.name);
+          expect(data.text).toBe(blog.text);
+          expect(data.id).toBeDefined();
+          expect(data.date).toBeDefined();
+          expect(response.body.message).toBe('Blog added successfully.');
+        });
+      await blogRepository.findOneOrFail(id);
+    });
+
+    it('should not post a blog with name that is too long', async () => {
+      const blog = rawBlogs[0];
+      const longName = 'a'.repeat(256);
+      await request(app.getHttpServer())
+        .post('/api/blogs')
+        .send({ text: blog.text, name: longName })
+        .expect(400)
+        .expect({
+          statusCode: 400,
+          error: 'Bad Request',
+          message: ["Name can't be longer than  255 characters."]
+        });
+      expect(await blogRepository.count()).toBe(0);
+    });
+
+    it("should not post a blog that doesn't have a name", async () => {
+      const blog = rawBlogs[0];
+      await request(app.getHttpServer())
+        .post('/api/blogs')
+        .send({ text: blog.text })
+        .expect(400);
+      expect(await blogRepository.count()).toBe(0);
+    });
+    // TODO:
+    it('should not post a blog from unauthenticated user');
+  });
 });
