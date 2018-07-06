@@ -1,4 +1,6 @@
 import { BlogResult } from '@api/blogs/blogs.interfaces';
+import { EntityNotFoundFilter } from '@common/exception-filters/entity-not-found-exception.filter';
+import { DataFormatter } from '@common/helpers/data-formatter';
 import {
   Body,
   Controller,
@@ -7,9 +9,9 @@ import {
   Param,
   Post,
   Put,
-  Query
+  Query,
+  UseFilters
 } from '@nestjs/common';
-import { DataFormatter } from '../../common/helpers/data-formatter';
 import { Blog } from './blog.entity';
 import { AddBlogDto, BlogIdParamDto, GetBlogsDto } from './blogs.dtos';
 import { BlogsService } from './blogs.service';
@@ -42,6 +44,7 @@ export class BlogsController {
   }
 
   @Get(':id')
+  @UseFilters(new EntityNotFoundFilter('Blog does not exist.'))
   async getBlog(@Param() { id }: BlogIdParamDto) {
     const blog = await this.blogs.getBlog(id);
     return {
@@ -59,6 +62,7 @@ export class BlogsController {
   }
 
   @Put(':id')
+  @UseFilters(new EntityNotFoundFilter('Blog does not exist.'))
   async editBlog(
     @Param() { id }: BlogIdParamDto,
     @Body() { name, text }: AddBlogDto
@@ -71,6 +75,7 @@ export class BlogsController {
   }
 
   @Delete(':id')
+  @UseFilters(new EntityNotFoundFilter('Blog does not exist.'))
   async deleteBlog(@Param() { id }: BlogIdParamDto) {
     await this.blogs.deleteBlog(id);
     return {

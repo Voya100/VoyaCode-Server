@@ -1,9 +1,10 @@
+import { AnyExceptionFilter } from '@common/exception-filters/any-exception.filter';
+import { BadRequestExceptionFilter } from '@common/exception-filters/bad-request-exception.filter';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import morgan from 'morgan';
 import { join } from 'path';
 import { AppModule } from './app.module';
-import { BadRequestExceptionFilter } from './common/exception-filters/bad-request-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: console });
@@ -21,7 +22,10 @@ async function bootstrap() {
     })
   );
   app.useStaticAssets(join(__dirname, '../../public'));
-  app.useGlobalFilters(new BadRequestExceptionFilter());
+  app.useGlobalFilters(
+    new BadRequestExceptionFilter(),
+    new AnyExceptionFilter()
+  );
 
   await app.listen(process.env.port || 8080);
 }
