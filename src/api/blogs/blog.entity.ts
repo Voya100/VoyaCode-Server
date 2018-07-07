@@ -2,7 +2,7 @@ import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('blogs', { schema: 'public' })
-export class Blog {
+export class BlogEntity {
   @PrimaryGeneratedColumn() id: number;
 
   @Column('character varying', {

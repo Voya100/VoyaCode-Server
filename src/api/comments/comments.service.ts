@@ -3,7 +3,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AddCommentDto } from './comments.dtos';
-import { Comment } from './comments.entity';
+import { CommentEntity } from './comments.entity';
 
 @Injectable()
 export class CommentsService {
@@ -14,10 +14,11 @@ export class CommentsService {
   }
 
   constructor(
-    @InjectRepository(Comment) private readonly comments: Repository<Comment>
+    @InjectRepository(CommentEntity)
+    private readonly comments: Repository<CommentEntity>
   ) {}
 
-  getComments(includePrivate = false): Promise<Comment[]> {
+  getComments(includePrivate = false): Promise<CommentEntity[]> {
     if (includePrivate) {
       return this.comments.find({ isDeleted: false });
     } else {
@@ -28,7 +29,7 @@ export class CommentsService {
   async addComment(
     { username, message, isPrivate }: AddCommentDto,
     isAdmin = false
-  ): Promise<Comment> {
+  ): Promise<CommentEntity> {
     // Only the admin can use forbidden names
     if (CommentsService.isForbiddenName(username) && !isAdmin) {
       throw new BadRequestException('Username is forbidden, use another.');
@@ -46,7 +47,7 @@ export class CommentsService {
     id: number;
     message: string;
     isPrivate: boolean;
-  }): Promise<Comment> {
+  }): Promise<CommentEntity> {
     const comment = await this.comments.findOneOrFail(id);
     comment.message = message;
     if (isPrivate !== undefined) {

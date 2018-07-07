@@ -22,13 +22,13 @@ import {
   CommentIdParamDto,
   EditCommentDto
 } from './comments.dtos';
-import { Comment } from './comments.entity';
+import { CommentEntity } from './comments.entity';
 
 @Controller('api/comments')
 export class CommentsController {
   constructor(private commentsService: CommentsService) {}
 
-  static formatCommentResult(comment: Comment): CommentResult {
+  static formatCommentResult(comment: CommentEntity): CommentResult {
     const { id, username, message, postTime, updateTime, isPrivate } = comment;
     return {
       id,

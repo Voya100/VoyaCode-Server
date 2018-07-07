@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 
 @Entity('comments', { schema: 'public' })
-export class Comment {
+export class CommentEntity {
   @PrimaryGeneratedColumn() id: number;
 
   @IsString({ message: 'Username must be a string.' })

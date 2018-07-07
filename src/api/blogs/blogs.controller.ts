@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { callback } from '../auth/jwt.strategy';
-import { Blog } from './blog.entity';
+import { BlogEntity } from './blog.entity';
 import {
   AddBlogDto,
   BlogIdParamDto,
@@ -28,7 +28,7 @@ import { BlogsService } from './blogs.service';
 export class BlogsController {
   constructor(private blogs: BlogsService) {}
 
-  static formatBlogResult(blog: Blog): BlogResult {
+  static formatBlogResult(blog: BlogEntity): BlogResult {
     return {
       id: blog.id,
       name: blog.name,
@@ -39,7 +39,7 @@ export class BlogsController {
       year: blog.date.getFullYear()
     };
   }
-  static formatBlogResults(blogs: Blog[]): BlogResult[] {
+  static formatBlogResults(blogs: BlogEntity[]): BlogResult[] {
     return blogs.map(BlogsController.formatBlogResult);
   }
 

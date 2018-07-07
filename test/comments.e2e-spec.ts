@@ -1,6 +1,6 @@
 import { CommentsController } from '@api/comments/comments.controller';
 import { AddCommentDto } from '@api/comments/comments.dtos';
-import { Comment } from '@api/comments/comments.entity';
+import { CommentEntity } from '@api/comments/comments.entity';
 import { CommentResult } from '@api/comments/comments.interfaces';
 import { CommentsService } from '@api/comments/comments.service';
 import { INestApplication } from '@nestjs/common';
@@ -12,12 +12,12 @@ import { generateApp, getAuthHeader } from './helpers/test.utils';
 
 describe('CommentsController (e2e)', () => {
   let app: INestApplication;
-  let commentRepository: Repository<Comment>;
+  let commentRepository: Repository<CommentEntity>;
   let authHeader: string;
 
   beforeAll(async () => {
     app = await generateApp();
-    commentRepository = app.get(getRepositoryToken(Comment));
+    commentRepository = app.get(getRepositoryToken(CommentEntity));
     authHeader = await getAuthHeader(app, 'Admin', 'admin');
     await app.init();
   });

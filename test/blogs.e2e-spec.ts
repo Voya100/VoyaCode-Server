@@ -1,4 +1,4 @@
-import { Blog } from '@api/blogs/blog.entity';
+import { BlogEntity } from '@api/blogs/blog.entity';
 import { INestApplication } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import request from 'supertest';
@@ -8,12 +8,12 @@ import { generateApp, getAuthHeader } from './helpers/test.utils';
 
 describe('BlogController (e2e)', () => {
   let app: INestApplication;
-  let blogRepository: Repository<Blog>;
+  let blogRepository: Repository<BlogEntity>;
   let authHeader: string;
 
   beforeAll(async () => {
     app = await generateApp();
-    blogRepository = app.get(getRepositoryToken(Blog));
+    blogRepository = app.get(getRepositoryToken(BlogEntity));
     authHeader = await getAuthHeader(app, 'Admin', 'admin');
     await app.init();
   });
