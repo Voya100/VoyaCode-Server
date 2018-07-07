@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "Server for Voya Code",
   "author": "Voya",
+  "engines": {
+    "node": ">8.11.3"
+  },
   "scripts": {
     "format": "prettier --write \"**/*.ts\"",
     "start": "ts-node -r tsconfig-paths/register src/main.ts",
