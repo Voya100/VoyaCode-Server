@@ -1,9 +1,9 @@
-import { User } from '@api/auth/user.interface';
+import { IUser } from '@api/auth/users/user.interface';
 import { ServerConfigService } from '@core/server-config/server-config.service';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
 import { JwtPayload } from './jwt-payload.interface';
-import { UsersService } from './users.service';
+import { UsersService } from './users/users.service';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +12,9 @@ export class AuthService {
     private readonly config: ServerConfigService
   ) {}
 
+  /**
+   * Checks that username and password match and returns a Json web token
+   */
   async login(username: string, password: string) {
     // Note: Because there is only 1 user (the admin) and the password
     // is unique, the password doesn't need to be encrypted
@@ -21,7 +24,9 @@ export class AuthService {
       const user = await this.usersService.getUser(username);
       return this.createToken(user.username, user.role);
     }
-    throw new UnauthorizedException('Login failed: wrong username or password');
+    throw new UnauthorizedException(
+      'Login failed: wrong username or password.'
+    );
   }
 
   async createToken(username: string, role: string) {
@@ -31,7 +36,7 @@ export class AuthService {
     });
   }
 
-  async validateUser(payload: JwtPayload): Promise<User> {
+  async validateUser(payload: JwtPayload): Promise<IUser> {
     return await this.usersService.getUser(payload.username);
   }
 }

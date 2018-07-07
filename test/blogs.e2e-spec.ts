@@ -212,7 +212,7 @@ describe('BlogController (e2e)', () => {
         .expect({
           statusCode: 401,
           error: 'Unauthorized',
-          message: 'You need to be logged in to proceed.'
+          message: 'A valid authentication token is required.'
         });
     });
   });
