@@ -3,6 +3,7 @@ import { ServerConfig } from './server-config.interface';
 
 const devConfig = {
   env: 'development',
+  port: 8000,
   database: {
     type: 'postgres',
     host: 'localhost',

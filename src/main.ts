@@ -1,6 +1,7 @@
 import { AnyExceptionFilter } from '@common/exception-filters/any-exception.filter';
 import { BadRequestExceptionFilter } from '@common/exception-filters/bad-request-exception.filter';
 import { UnauthorizedExceptionFilter } from '@common/exception-filters/unauthorized-exception.filter';
+import { ServerConfigService } from '@core/server-config/server-config.service';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import helmet from 'helmet';
@@ -10,7 +11,7 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: console });
-
+  const config = app.get(ServerConfigService);
   app.use(
     helmet({
       frameguard: false
@@ -35,6 +36,6 @@ async function bootstrap() {
     new UnauthorizedExceptionFilter()
   );
 
-  await app.listen(process.env.port || 8080);
+  await app.listen(process.env.port || config.port || 8080);
 }
 bootstrap();
