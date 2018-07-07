@@ -1,52 +1,53 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Transform } from 'class-transformer';
+import { IsString, Length, MinLength } from 'class-validator';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
+} from 'typeorm';
 
 @Entity('comments', { schema: 'public' })
 export class Comment {
   @PrimaryGeneratedColumn() id: number;
 
-  @Column('character varying', {
-    nullable: false,
-    length: 50,
-    name: 'username'
+  @IsString({ message: 'Username must be a string.' })
+  @Transform(value => value.trim())
+  @Length(4, 15, {
+    message: 'Username must be $constraint1 - $constraint2 characters long.'
+  })
+  @Column({
+    type: 'varchar',
+    length: 50
   })
   username: string;
 
-  @Column('text', {
-    nullable: false,
-    name: 'message'
+  @MinLength(4, {
+    message: 'Message must be longer than $constraint1 characters.'
   })
+  @Column()
   message: string;
 
-  @Column('boolean', {
-    nullable: false,
-    default: 'false',
-    name: 'private'
+  @Column({
+    name: 'private',
+    default: 'false'
   })
-  private: boolean;
+  isPrivate: boolean;
 
-  @Column('character varying', {
-    nullable: false,
-    length: 45,
-    name: 'ip'
+  @Column({
+    name: 'deleted',
+    default: 'false'
   })
-  ip: string;
+  isDeleted: boolean;
 
-  @Column('boolean', {
-    nullable: false,
-    default: 'false',
-    name: 'deleted'
-  })
-  deleted: boolean;
-
-  @Column('integer', {
-    nullable: false,
+  @UpdateDateColumn({
     name: 'update_time'
   })
-  update_time: number;
+  updateTime: Date;
 
-  @Column('integer', {
-    nullable: false,
+  @CreateDateColumn({
     name: 'post_time'
   })
-  post_time: number;
+  postTime: Date;
 }

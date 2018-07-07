@@ -16,7 +16,8 @@
     "test": "cross-env NODE_ENV=test jest",
     "test:cov": "cross-env NODE_ENV=test jest --coverage",
     "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --runInBand",
-    "webpack": "webpack --config webpack.config.js"
+    "webpack": "webpack --config webpack.config.js",
+    "migrate": "ts-node ./node_modules/typeorm/cli.js migration:generate -n CommentMigration"
   },
   "dependencies": {
     "@nestjs/common": "^5.1.0",
