@@ -1,0 +1,15 @@
+{
+  "moduleFileExtensions": ["js", "json", "ts"],
+  "rootDir": "../",
+  "testRegex": ".spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "roots": ["<rootDir>/src/", "<rootDir>/test/"],
+  "moduleNameMapper": {
+    "^@api(.*)$": "<rootDir>/src/api$1",
+    "^@core(.*)$": "<rootDir>/src/core$1",
+    "^@common(.*)$": "<rootDir>/src/common$1"
+  },
+  "coverageDirectory": "coverage"
+}
