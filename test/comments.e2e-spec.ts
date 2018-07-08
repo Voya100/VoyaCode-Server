@@ -23,7 +23,7 @@ describe('CommentsController (e2e)', () => {
   });
 
   afterEach(async () => {
-    commentRepository.clear();
+    await commentRepository.clear();
   });
 
   const privateComment = {

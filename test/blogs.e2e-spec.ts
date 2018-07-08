@@ -19,7 +19,7 @@ describe('BlogController (e2e)', () => {
   });
 
   afterEach(async () => {
-    blogRepository.clear();
+    await blogRepository.clear();
   });
 
   const rawBlogs = [
