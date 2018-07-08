@@ -1,4 +1,6 @@
 import { Global, Module } from '@nestjs/common';
+import NodeCache from 'node-cache';
+import { CacheService } from './cache.service';
 import { ServerConfigService } from './server-config/server-config.service';
 
 @Global()
@@ -7,8 +9,12 @@ import { ServerConfigService } from './server-config/server-config.service';
     {
       provide: ServerConfigService,
       useValue: new ServerConfigService(process.env.NODE_ENV || 'development')
+    },
+    {
+      provide: CacheService,
+      useValue: new CacheService(new NodeCache())
     }
   ],
-  exports: [ServerConfigService]
+  exports: [ServerConfigService, CacheService]
 })
 export class CoreModule {}
