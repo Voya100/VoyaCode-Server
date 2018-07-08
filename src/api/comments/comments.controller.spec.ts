@@ -1,15 +1,16 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { CommentEntity } from '@api/comments/comments.entity';
+import { CommentsService } from '@api/comments/comments.service';
+import { Repository } from 'typeorm';
 import { CommentsController } from './comments.controller';
 
 describe('Comments Controller', () => {
-  let module: TestingModule;
+  let commentService: CommentsService;
+  let commentsController: CommentsController;
   beforeAll(async () => {
-    module = await Test.createTestingModule({
-      controllers: [CommentsController],
-    }).compile();
+    commentService = new CommentsService({} as Repository<CommentEntity>);
+    commentsController = new CommentsController(commentService);
   });
   it('should be defined', () => {
-    const controller: CommentsController = module.get<CommentsController>(CommentsController);
-    expect(controller).toBeDefined();
+    expect(commentsController).toBeDefined();
   });
 });
