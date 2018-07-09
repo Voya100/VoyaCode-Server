@@ -13,7 +13,7 @@ export interface ServerConfig {
     migrations?: string[];
     migrationsRun?: boolean;
     cli?: {
-      entitiesDir: string;
+      entitiesDir?: string;
       migrationsDir: string;
       subscribersDir: string;
     };
@@ -28,6 +28,8 @@ export interface ServerConfig {
       username: string;
       role: string;
       password: string;
+      // For development purposes
+      unhashedPassword?: string;
     };
   };
   mailgun: {

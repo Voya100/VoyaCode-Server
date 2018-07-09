@@ -3,7 +3,8 @@ import { IUser } from '@api/auth/users/user.interface';
 import { UsersService } from '@api/auth/users/users.service';
 import { ServerConfigService } from '@core/server-config/server-config.service';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import * as jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -16,11 +17,14 @@ export class AuthService {
    * Checks that username and password match and returns a Json web token
    */
   async login(username: string, password: string) {
-    // Note: Because there is only 1 user (the admin) and the password
-    // is unique, the password doesn't need to be encrypted
-    // Todo: add encryption anyway?
-    const realPassword = await this.usersService.getUserPassword(username);
-    if (realPassword === password) {
+    const hashedPassword = await this.usersService.getUserPassword(username);
+    if (hashedPassword === undefined) {
+      throw new UnauthorizedException(
+        'Login failed: wrong username or password.'
+      );
+    }
+    const passwordMatches = await bcrypt.compare(password, hashedPassword);
+    if (passwordMatches) {
       const user = await this.usersService.getUser(username);
       return this.createToken(user.username, user.role);
     }

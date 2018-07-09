@@ -16,7 +16,6 @@ const devConfig = {
     migrations: ['migration/*.ts'],
     migrationsRun: true,
     cli: {
-      entitiesDir: 'entity',
       migrationsDir: 'migration',
       subscribersDir: 'subscriber'
     }
@@ -31,7 +30,8 @@ const devConfig = {
     Admin: {
       username: 'Admin',
       role: 'admin',
-      password: 'test-password'
+      unhashedPassword: 'test-password',
+      password: '$2b$10$MaA8AtI9xIIKx2ommxr9duNq186fCmuPOyNnIZlJgsA.6mNPtghaW'
     }
   },
   mailgun: {

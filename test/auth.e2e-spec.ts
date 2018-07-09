@@ -17,9 +17,13 @@ describe('AuthController (e2e)', () => {
     adminUser = config.users['Admin'];
     adminCredentials = {
       username: adminUser.username,
-      password: adminUser.password
+      password: (adminUser as any).unhashedPassword
     };
     await app.init();
+  });
+
+  afterAll(async () => {
+    await app.close();
   });
 
   describe('POST api/auth/login', () => {

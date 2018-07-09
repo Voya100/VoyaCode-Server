@@ -15,7 +15,7 @@ export class ServerConfigService implements ServerConfig {
     migrations: string[];
     migrationsRun: boolean;
     cli: {
-      entitiesDir: string;
+      entitiesDir?: string;
       migrationsDir: string;
       subscribersDir: string;
     };
@@ -27,7 +27,12 @@ export class ServerConfigService implements ServerConfig {
     expiryTime: number;
   };
   users: {
-    [username: string]: { username: string; role: string; password: string };
+    [username: string]: {
+      username: string;
+      role: string;
+      password: string;
+      unhashedPassword?: string;
+    };
   };
   mailgun: { apiKey: string; domain: string };
   encryptPassword: string;

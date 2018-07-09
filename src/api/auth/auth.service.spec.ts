@@ -1,7 +1,8 @@
 import { AuthService } from '@api/auth/auth.service';
 import { UsersService } from '@api/auth/users/users.service';
 import { UnauthorizedException } from '@nestjs/common';
-import * as jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -14,7 +15,8 @@ describe('AuthService', () => {
       testUser: {
         username: 'testUser',
         role: 'tester',
-        password: 'very-secure-password'
+        password: bcrypt.hash('very-secure-password', 10),
+        unhashedPassword: 'very-secure-password'
       }
     }
   };
@@ -44,7 +46,7 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    const { username, password } = user;
+    const { username, unhashedPassword: password } = user;
     it('should return a valid token on successful login', async () => {
       const token = await service.login(username, password);
       expect(typeof token).toBe('string');
@@ -60,13 +62,13 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException on wrong password', async () => {
-      expect(service.login(username, 'fake-password')).rejects.toThrowError(
-        UnauthorizedException
-      );
+      await expect(
+        service.login(username, 'fake-password')
+      ).rejects.toThrowError(UnauthorizedException);
     });
 
     it("should throw UnauthorizedException on username that doesn't exist", async () => {
-      expect(service.login('fake-user', password)).rejects.toThrow(
+      await expect(service.login('fake-user', password)).rejects.toThrow(
         UnauthorizedException
       );
     });
