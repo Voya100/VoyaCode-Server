@@ -1,5 +1,5 @@
-import { config as devConfig } from './config.development';
-import { ServerConfigService } from './server-config.service';
+import { config as devConfig } from '@core/server-config/config.development';
+import { ServerConfigService } from '@core/server-config/server-config.service';
 
 describe('ServerConfigService', () => {
   let service: ServerConfigService;

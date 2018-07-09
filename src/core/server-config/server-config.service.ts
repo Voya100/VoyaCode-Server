@@ -1,5 +1,5 @@
+import { ServerConfig } from '@core/server-config/server-config.interface';
 import { Injectable } from '@nestjs/common';
-import { ServerConfig } from './server-config.interface';
 
 @Injectable()
 export class ServerConfigService implements ServerConfig {

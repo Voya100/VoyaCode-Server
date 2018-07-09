@@ -1,6 +1,6 @@
+import { CacheService } from '@core/cache.service';
 import { CoreModule } from '@core/core.module';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CacheService } from './cache.service';
 
 describe('CacheService', () => {
   let service: CacheService;

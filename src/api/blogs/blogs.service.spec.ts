@@ -1,6 +1,6 @@
+import { BlogEntity } from '@api/blogs/blog.entity';
+import { BlogsService } from '@api/blogs/blogs.service';
 import { Repository } from 'typeorm';
-import { BlogEntity } from './blog.entity';
-import { BlogsService } from './blogs.service';
 
 describe('BlogsService', () => {
   let service: BlogsService;
@@ -8,7 +8,7 @@ describe('BlogsService', () => {
 
   beforeAll(async () => {
     mockRepository = {} as any;
-    service = new BlogsService(mockRepository);
+    service = new BlogsService(mockRepository, {} as any);
   });
 
   it('should be defined', () => {

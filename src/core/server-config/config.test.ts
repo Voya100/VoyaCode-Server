@@ -1,5 +1,5 @@
+import { config as devConfig } from '@core/server-config/config.development';
 import { ServerConfig } from '@core/server-config/server-config.interface';
-import { config as devConfig } from './config.development';
 
 const database = {
   type: 'postgres',

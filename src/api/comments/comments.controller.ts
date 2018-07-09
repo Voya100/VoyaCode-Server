@@ -1,5 +1,11 @@
 import { callback, optionalLogin } from '@api/auth/jwt.strategy';
 import { IUser } from '@api/auth/users/user.interface';
+import {
+  AddCommentDto,
+  CommentIdParamDto,
+  EditCommentDto
+} from '@api/comments/comments.dtos';
+import { CommentEntity } from '@api/comments/comments.entity';
 import { CommentResult } from '@api/comments/comments.interfaces';
 import { CommentsService } from '@api/comments/comments.service';
 import { User } from '@common/decorators/user.decorator';
@@ -17,12 +23,6 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import {
-  AddCommentDto,
-  CommentIdParamDto,
-  EditCommentDto
-} from './comments.dtos';
-import { CommentEntity } from './comments.entity';
 
 @Controller('api/comments')
 export class CommentsController {

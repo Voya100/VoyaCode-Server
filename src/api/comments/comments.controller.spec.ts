@@ -1,7 +1,7 @@
+import { CommentsController } from '@api/comments/comments.controller';
 import { CommentEntity } from '@api/comments/comments.entity';
 import { CommentsService } from '@api/comments/comments.service';
 import { Repository } from 'typeorm';
-import { CommentsController } from './comments.controller';
 
 describe('Comments Controller', () => {
   let commentService: CommentsService;

@@ -1,9 +1,9 @@
+import { AddCommentDto } from '@api/comments/comments.dtos';
+import { CommentEntity } from '@api/comments/comments.entity';
 import { validateEntity } from '@common/helpers/database-helpers';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { AddCommentDto } from './comments.dtos';
-import { CommentEntity } from './comments.entity';
 
 @Injectable()
 export class CommentsService {

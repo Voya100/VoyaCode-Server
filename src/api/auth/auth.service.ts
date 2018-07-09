@@ -1,9 +1,9 @@
+import { JwtPayload } from '@api/auth/jwt-payload.interface';
 import { IUser } from '@api/auth/users/user.interface';
+import { UsersService } from '@api/auth/users/users.service';
 import { ServerConfigService } from '@core/server-config/server-config.service';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
-import { JwtPayload } from './jwt-payload.interface';
-import { UsersService } from './users/users.service';
 
 @Injectable()
 export class AuthService {

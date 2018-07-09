@@ -1,5 +1,5 @@
-import { sharedConfig } from './config.shared';
-import { ServerConfig } from './server-config.interface';
+import { sharedConfig } from '@core/server-config/config.shared';
+import { ServerConfig } from '@core/server-config/server-config.interface';
 
 const devConfig = {
   env: 'development',

@@ -1,4 +1,4 @@
-import { DataFormatter } from './data-formatter';
+import { DataFormatter } from '@common/helpers/data-formatter';
 
 describe('DataFormatter', () => {
   const winterDateTimes = [
@@ -94,7 +94,7 @@ describe('DataFormatter', () => {
   });
 
   describe('tagsToHtml', () => {
-    function testTagsToHtml(input, output) {
+    function testTagsToHtml(input: string, output: string) {
       expect(DataFormatter.tagsToHtml(input)).toBe(output);
     }
 

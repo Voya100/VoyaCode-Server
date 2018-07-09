@@ -1,7 +1,7 @@
+import { AuthService } from '@api/auth/auth.service';
+import { UsersService } from '@api/auth/users/users.service';
 import { UnauthorizedException } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
-import { AuthService } from './auth.service';
-import { UsersService } from './users/users.service';
 
 describe('AuthService', () => {
   let service: AuthService;

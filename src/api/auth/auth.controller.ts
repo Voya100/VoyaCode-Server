@@ -1,4 +1,6 @@
 import { LoginDto } from '@api/auth/auth.dtos';
+import { AuthService } from '@api/auth/auth.service';
+import { callback } from '@api/auth/jwt.strategy';
 import {
   Body,
   Controller,
@@ -8,8 +10,6 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { AuthService } from './auth.service';
-import { callback } from './jwt.strategy';
 
 @Controller('api/auth')
 export class AuthController {

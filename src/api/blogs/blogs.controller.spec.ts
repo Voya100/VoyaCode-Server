@@ -1,13 +1,26 @@
+import { BlogsController } from '@api/blogs/blogs.controller';
 import { BlogResult } from '@api/blogs/blogs.interfaces';
-import { BlogsController } from './blogs.controller';
-import { BlogsService } from './blogs.service';
+import { BlogsService } from '@api/blogs/blogs.service';
+import { Test, TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+
+import { AppModule } from '../../app.module';
+
+import { BlogEntity } from './blog.entity';
 
 describe('Blogs Controller', () => {
+  let module: TestingModule;
   let blogsService: BlogsService;
   let blogsController: BlogsController;
   beforeAll(async () => {
-    blogsService = new BlogsService({} as any);
-    blogsController = new BlogsController(blogsService);
+    module = await Test.createTestingModule({
+      imports: [AppModule]
+    })
+      .overrideProvider(getRepositoryToken(BlogEntity))
+      .useValue({})
+      .compile();
+    blogsService = module.get(BlogsService);
+    blogsController = module.get(BlogsController);
   });
 
   const rawBlogs = [

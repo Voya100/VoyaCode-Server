@@ -1,10 +1,11 @@
 import { BlogEntity } from '@api/blogs/blog.entity';
+import { BlogsService } from '@api/blogs/blogs.service';
 import { INestApplication } from '@nestjs/common';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import request from 'supertest';
 import { Response } from 'supertest';
 import { Repository } from 'typeorm';
-import { BlogsService } from '../src/api/blogs/blogs.service';
+
 import { generateApp } from './helpers/test.utils';
 
 describe('BlogRssController (e2e)', () => {

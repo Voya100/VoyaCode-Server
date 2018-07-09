@@ -1,9 +1,10 @@
+import { AuthService } from '@api/auth/auth.service';
 import { AnyExceptionFilter } from '@common/exception-filters/any-exception.filter';
 import { BadRequestExceptionFilter } from '@common/exception-filters/bad-request-exception.filter';
 import { UnauthorizedExceptionFilter } from '@common/exception-filters/unauthorized-exception.filter';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
-import { AuthService } from '../../src/api/auth/auth.service';
+
 import { AppModule } from '../../src/app.module';
 
 export async function generateApp() {

@@ -1,4 +1,13 @@
+import { callback } from '@api/auth/jwt.strategy';
+import { BlogEntity } from '@api/blogs/blog.entity';
+import {
+  AddBlogDto,
+  BlogIdParamDto,
+  GetBlogsDto,
+  PreviewBlogDto
+} from '@api/blogs/blogs.dtos';
 import { BlogResult } from '@api/blogs/blogs.interfaces';
+import { BlogsService } from '@api/blogs/blogs.service';
 import { EntityNotFoundFilter } from '@common/exception-filters/entity-not-found-exception.filter';
 import { DataFormatter } from '@common/helpers/data-formatter';
 import {
@@ -14,15 +23,6 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { callback } from '../auth/jwt.strategy';
-import { BlogEntity } from './blog.entity';
-import {
-  AddBlogDto,
-  BlogIdParamDto,
-  GetBlogsDto,
-  PreviewBlogDto
-} from './blogs.dtos';
-import { BlogsService } from './blogs.service';
 
 @Controller('api/blogs')
 export class BlogsController {

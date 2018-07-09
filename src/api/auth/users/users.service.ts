@@ -1,6 +1,6 @@
+import { IUser } from '@api/auth/users/user.interface';
 import { ServerConfigService } from '@core/server-config/server-config.service';
 import { Injectable } from '@nestjs/common';
-import { IUser } from './user.interface';
 
 @Injectable()
 export class UsersService {
