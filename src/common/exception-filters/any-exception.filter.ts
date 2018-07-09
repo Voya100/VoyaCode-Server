@@ -16,6 +16,7 @@ export class AnyExceptionFilter implements ExceptionFilter {
 
     response.status(status).json({
       statusCode: status,
+      error: 'Server error',
       message: exception.message || 'Server error'
     });
   }
