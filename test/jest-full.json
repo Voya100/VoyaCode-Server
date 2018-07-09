@@ -12,5 +12,11 @@
     "^@common(.*)$": "<rootDir>/src/common$1",
     "^@test(.*)$": "<rootDir>/test$1"
   },
-  "coverageDirectory": "coverage"
+  "coverageDirectory": "coverage",
+  "coveragePathIgnorePatterns": [
+    "/node_modules/",
+    ".entity.ts",
+    ".dtos.ts",
+    ".dto.ts"
+  ]
 }

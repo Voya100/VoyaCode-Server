@@ -5,11 +5,17 @@
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
   },
-  "coverageDirectory": "../coverage",
   "moduleNameMapper": {
     "^@api(.*)$": "<rootDir>/api$1",
     "^@core(.*)$": "<rootDir>/core$1",
     "^@common(.*)$": "<rootDir>/common$1",
     "^@test(.*)$": "<rootDir>/../test$1"
-  }
+  },
+  "coverageDirectory": "../coverage",
+  "coveragePathIgnorePatterns": [
+    "/node_modules/",
+    ".entity.ts",
+    ".dtos.ts",
+    ".dto.ts"
+  ]
 }
