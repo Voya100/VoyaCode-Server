@@ -1,9 +1,9 @@
 import { ServerConfigService } from '@core/server-config/server-config.service';
 import { INestApplication } from '@nestjs/common';
+import { generateApp } from '@test/helpers/test.utils';
 import { Request } from 'express-serve-static-core';
 import * as jwt from 'jsonwebtoken';
 import request from 'supertest';
-import { generateApp } from './helpers/test.utils';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;

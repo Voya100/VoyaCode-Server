@@ -20,7 +20,8 @@
     "paths": {
       "@api/*": ["api/*"],
       "@core/*": ["core/*"],
-      "@common/*": ["common/*"]
+      "@common/*": ["common/*"],
+      "@test/*": ["../test/*"]
     }
   },
   "exclude": ["node_modules"]

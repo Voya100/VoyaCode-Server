@@ -9,7 +9,8 @@
   "moduleNameMapper": {
     "^@api(.*)$": "<rootDir>/src/api$1",
     "^@core(.*)$": "<rootDir>/src/core$1",
-    "^@common(.*)$": "<rootDir>/src/common$1"
+    "^@common(.*)$": "<rootDir>/src/common$1",
+    "^@test(.*)$": "<rootDir>/test$1"
   },
   "coverageDirectory": "coverage"
 }
