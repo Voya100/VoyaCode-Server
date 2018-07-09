@@ -1,5 +1,6 @@
 import { AnyExceptionFilter } from '@common/exception-filters/any-exception.filter';
 import { BadRequestExceptionFilter } from '@common/exception-filters/bad-request-exception.filter';
+import { NotFoundExceptionFilter } from '@common/exception-filters/not-found-exception.filter';
 import { UnauthorizedExceptionFilter } from '@common/exception-filters/unauthorized-exception.filter';
 import { ServerConfigService } from '@core/server-config/server-config.service';
 import { ValidationPipe } from '@nestjs/common';
@@ -7,6 +8,7 @@ import { NestFactory } from '@nestjs/core';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { join } from 'path';
+
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -33,7 +35,8 @@ async function bootstrap() {
   app.useGlobalFilters(
     new AnyExceptionFilter(),
     new BadRequestExceptionFilter(),
-    new UnauthorizedExceptionFilter()
+    new UnauthorizedExceptionFilter(),
+    new NotFoundExceptionFilter()
   );
 
   await app.listen(process.env.port || config.port || 8080);
