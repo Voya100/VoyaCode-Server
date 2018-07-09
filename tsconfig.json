@@ -16,7 +16,7 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./src",
-    "typeRoots": ["node_modules/@types"],
+    "typeRoots": ["node_modules/@types", "typings"],
     "paths": {
       "@api/*": ["api/*"],
       "@core/*": ["core/*"],

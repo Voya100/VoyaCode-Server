@@ -2,6 +2,7 @@ import { BlogEntity } from '@api/blogs/blog.entity';
 import { DataFormatter } from '@common/helpers/data-formatter';
 import { validateEntity } from '@common/helpers/database-helpers';
 import { CacheService } from '@core/cache.service';
+import { EmailService } from '@core/email/email.service';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Rss from 'rss';
@@ -12,7 +13,8 @@ export class BlogsService {
   constructor(
     @InjectRepository(BlogEntity)
     private readonly blogs: Repository<BlogEntity>,
-    private readonly cache: CacheService
+    private readonly cache: CacheService,
+    private readonly emailService: EmailService
   ) {}
 
   async getBlogs({ limit }: { limit?: number }) {
@@ -36,6 +38,7 @@ export class BlogsService {
     const blogResult = await this.blogs.save(blog);
     // Reset cache so that it will get refreshed on next request
     this.cache.delete('blog-rss');
+    this.sendBlogNewsletter(blogResult.name, blogResult.id);
     return blogResult;
   }
 
@@ -50,6 +53,29 @@ export class BlogsService {
   async deleteBlog(id: number) {
     const blog = await this.blogs.findOneOrFail(id);
     return await this.blogs.remove(blog);
+  }
+
+  async sendBlogNewsletter(title: string, id: number) {
+    const sender = 'Voya Code <blogs@voyacode.com>';
+    const mailingList = 'blogs@voyacode.com';
+    const subject = `Voya Code has released a new blog: ${title}`;
+    const message =
+      'Hey,\n\n' +
+      `Voya Code has released a new blog titled "'${title}". ` +
+      `You can read it here: https://voyacode.com/blogs/${id}\n\n` +
+      'If you no longer wish to get these emails, you can unsubscribe here: ' +
+      'https://voyacode.com/blogs/unsubscribe/%recipient.encodedAddress%';
+    const tags = {
+      'h:List-Unsubscribe':
+        'https://voyacode.com/blogs/unsubscribe/%recipient.encodedAddress%'
+    };
+    await this.emailService.sendMail(
+      sender,
+      mailingList,
+      subject,
+      message,
+      tags
+    );
   }
 
   // Returns blogs' rss xml document
