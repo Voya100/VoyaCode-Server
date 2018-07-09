@@ -60,7 +60,7 @@ describe('BlogSubscriptionService', () => {
     });
 
     it('should throw error on invalid email encryption', async () => {
-      expect(
+      await expect(
         subscriptionService.subscribeToNewsletter('fake-encryption')
       ).rejects.toThrow(BadRequestException);
       expect(emailMockService.addToMailingList).not.toBeCalled();
@@ -68,7 +68,7 @@ describe('BlogSubscriptionService', () => {
 
     it('should throw error on invalid email that is encrypted', async () => {
       const encryptedNonEmail = encryptService.urlEncrypt('not-an-email');
-      expect(
+      await expect(
         subscriptionService.subscribeToNewsletter(encryptedNonEmail)
       ).rejects.toThrow(BadRequestException);
       expect(emailMockService.addToMailingList).not.toBeCalled();
@@ -87,7 +87,7 @@ describe('BlogSubscriptionService', () => {
     });
 
     it('should throw error on invalid email encryption', async () => {
-      expect(
+      await expect(
         subscriptionService.unsubscribeFromNewsletter('fake-encryption')
       ).rejects.toThrow(BadRequestException);
       expect(emailMockService.removeFromMailingList).not.toBeCalled();
@@ -95,7 +95,7 @@ describe('BlogSubscriptionService', () => {
 
     it('should throw error on invalid email that is encrypted', async () => {
       const encryptedNonEmail = encryptService.urlEncrypt('not-an-email');
-      expect(
+      await expect(
         subscriptionService.unsubscribeFromNewsletter(encryptedNonEmail)
       ).rejects.toThrow(BadRequestException);
       expect(emailMockService.removeFromMailingList).not.toBeCalled();

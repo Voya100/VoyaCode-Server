@@ -27,6 +27,10 @@ describe('CommentsController (e2e)', () => {
     await commentRepository.clear();
   });
 
+  afterAll(async () => {
+    await app.close();
+  });
+
   const privateComment = {
     username: '<i>Private user</i>',
     message: 'My secret message to you <3',

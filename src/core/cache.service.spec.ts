@@ -22,13 +22,13 @@ describe('CacheService', () => {
       expect(service.get('key')).resolves.toBe('value');
     });
 
-    it('should return rejected promise', () => {
+    it('should return rejected promise', async () => {
       cache.get = jest
         .fn()
         .mockImplementation((_, fn: (err: any, value: any) => void) => {
           fn('error-message', false);
         });
-      expect(service.get('key')).rejects.toBe('error-message');
+      await expect(service.get('key')).rejects.toBe('error-message');
     });
   });
 

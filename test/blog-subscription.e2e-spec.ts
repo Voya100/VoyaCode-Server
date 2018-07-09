@@ -14,6 +14,10 @@ describe('BlogSubscriptionController (e2e)', () => {
     await app.init();
   });
 
+  afterAll(async () => {
+    await app.close();
+  });
+
   describe('POST /api/blogs/subscribe', () => {
     it('should return success message on valid email', () => {
       return request(app.getHttpServer())
