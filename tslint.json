@@ -78,6 +78,7 @@
     "prefer-function-over-method": false,
     "trailing-comma": false,
     "max-classes-per-file": false,
-    "arrow-parens": false
+    "arrow-parens": false,
+    "object-literal-key-quotes": [true, "as-needed"]
   }
 }
