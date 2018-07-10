@@ -61,7 +61,7 @@ export class BlogsService {
     const subject = `Voya Code has released a new blog: ${title}`;
     const message =
       'Hey,\n\n' +
-      `Voya Code has released a new blog titled "'${title}". ` +
+      `Voya Code has released a new blog titled "${title}". ` +
       `You can read it here: https://voyacode.com/blogs/${id}\n\n` +
       'If you no longer wish to get these emails, you can unsubscribe here: ' +
       'https://voyacode.com/blogs/unsubscribe/%recipient.encodedAddress%';
