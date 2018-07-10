@@ -13,7 +13,7 @@ export class EmailService {
   ) {}
 
   addToMailingList(email: string, list: string) {
-    const encodedEmail = this.encryptService.urlEncrypt(email);
+    const encodedAddress = this.encryptService.urlEncrypt(email);
     return this.mailgun
       .lists(list)
       .members()
@@ -21,7 +21,7 @@ export class EmailService {
         address: email,
         name: email.split('@')[0],
         subscribed: true,
-        vars: { encodedEmail }
+        vars: { encodedAddress }
       });
   }
 
