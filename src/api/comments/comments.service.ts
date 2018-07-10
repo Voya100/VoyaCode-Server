@@ -27,16 +27,26 @@ export class CommentsService {
   }
 
   async addComment(
-    { username, message, isPrivate }: AddCommentDto,
+    commentDetails: AddCommentDto,
     isAdmin = false
   ): Promise<CommentEntity> {
+    const comment = await this.createComment(commentDetails, isAdmin);
+    return this.comments.save(comment);
+  }
+
+  // Creates a comment entity without saving it
+  // Also handles validation
+  async createComment(
+    { username, message, isPrivate }: AddCommentDto,
+    isAdmin = false
+  ) {
     // Only the admin can use forbidden names
     if (CommentsService.isForbiddenName(username) && !isAdmin) {
       throw new BadRequestException('Username is forbidden, use another.');
     }
     const comment = this.comments.create({ username, message, isPrivate });
     await validateEntity(comment);
-    return this.comments.save(comment);
+    return comment;
   }
 
   async editComment({

@@ -16,6 +16,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Post,
   Put,
@@ -62,17 +63,32 @@ export class CommentsController {
   ) {
     const isAdmin = user && user.role === 'admin';
     const commentEntity = await this.commentsService.addComment(
-      {
-        username,
-        message,
-        isPrivate
-      },
+      { username, message, isPrivate },
       isAdmin
     );
     const commentResult = CommentsController.formatCommentResult(commentEntity);
     return {
       data: commentResult,
       message: 'Comment added successfully.'
+    };
+  }
+
+  // Shows what comment would look like without posting it
+  @Post('preview')
+  @HttpCode(200)
+  @UseGuards(AuthGuard('jwt', { callback: optionalLogin }))
+  async previewComment(
+    @User() user: IUser,
+    @Body() { username, message, isPrivate }: AddCommentDto
+  ) {
+    const isAdmin = user && user.role === 'admin';
+    const commentEntity = await this.commentsService.createComment(
+      { username, message, isPrivate },
+      isAdmin
+    );
+    const commentResult = CommentsController.formatCommentResult(commentEntity);
+    return {
+      data: commentResult
     };
   }
 

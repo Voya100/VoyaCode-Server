@@ -158,6 +158,53 @@ describe('CommentsController (e2e)', () => {
     });
   });
 
+  describe('POST /api/comments/preview', () => {
+    it('should show preview without posting the comment', async () => {
+      const { username, message } = rawComments[0];
+      const formattedComment = formattedComments[0];
+      let id: number;
+      await request(app.getHttpServer())
+        .post('/api/comments')
+        .send({ username, message })
+        .expect(200)
+        .expect((response: Response) => {
+          const data: CommentResult = response.body.data;
+          id = data.id;
+          expect(data.username).toBe(formattedComment.username);
+          expect(data.message).toBe(formattedComment.message);
+          expect(data.id).toBeDefined();
+          expect(data.postTime).toBeDefined();
+          expect(data.updateTime).toBeDefined();
+          expect(data.postTime).toBe(data.updateTime);
+        });
+      await expect(await commentRepository.findOne(id)).toBeUndefined();
+    });
+
+    it('should not allow a preview for a comment with forbidden username', async () => {
+      const { message } = rawComments[0];
+      const forbiddenName = CommentsService.forbiddenUsernames[0];
+      await request(app.getHttpServer())
+        .post('/api/comments/preview')
+        .send({ username: forbiddenName, message })
+        .expect(400)
+        .expect({
+          statusCode: 400,
+          error: 'Bad Request',
+          message: 'Username is forbidden, use another.'
+        });
+    });
+
+    it('should allow forbidden username with admin credentials', async () => {
+      const { message } = rawComments[0];
+      const forbiddenName = CommentsService.forbiddenUsernames[0];
+      await request(app.getHttpServer())
+        .post('/api/comments/preview')
+        .set('Authorization', authHeader)
+        .send({ username: forbiddenName, message })
+        .expect(200);
+    });
+  });
+
   describe('PUT /api/comments/:id', async () => {
     it('should edit the comment', async () => {
       await commentRepository.insert(rawComments);
