@@ -1,12 +1,11 @@
-import { CacheService } from '@core/cache.service';
+import { CacheService } from '@core/cache/cache.service';
 import { EmailService } from '@core/email/email.service';
+import { MailgunMock } from '@core/email/mailgun.mock';
 import { EncryptService } from '@core/encrypt/encrypt.service';
 import { ServerConfigService } from '@core/server-config/server-config.service';
 import { Global, Module } from '@nestjs/common';
 import mailgunConstructor from 'mailgun-js';
 import NodeCache from 'node-cache';
-
-import { MailgunMock } from './email/mailgun.mock';
 
 const serverConfig = new ServerConfigService(
   process.env.NODE_ENV || 'development'

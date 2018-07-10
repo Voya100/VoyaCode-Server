@@ -1,4 +1,4 @@
-import { CacheService } from '@core/cache.service';
+import { CacheService } from '@core/cache/cache.service';
 
 describe('CacheService', () => {
   let service: CacheService;

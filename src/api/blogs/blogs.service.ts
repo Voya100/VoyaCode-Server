@@ -1,7 +1,7 @@
 import { BlogEntity } from '@api/blogs/blog.entity';
 import { DataFormatter } from '@common/helpers/data-formatter';
 import { validateEntity } from '@common/helpers/database-helpers';
-import { CacheService } from '@core/cache.service';
+import { CacheService } from '@core/cache/cache.service';
 import { EmailService } from '@core/email/email.service';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
