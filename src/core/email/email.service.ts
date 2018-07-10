@@ -26,10 +26,11 @@ export class EmailService {
   }
 
   removeFromMailingList(email: string, list: string) {
-    return this.mailgun
+    // Typings doesn't seem to agree that .delete is a valid method
+    return (this.mailgun as any)
       .lists(list)
       .members(email)
-      .update({ name: email.split('@')[0], subscribed: false });
+      .delete();
   }
 
   sendMail(

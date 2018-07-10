@@ -5,6 +5,7 @@ export const MailgunMock = () => ({
   lists: () => ({
     members: () => ({
       create: () => {},
+      delete: () => {},
       update: () => {}
     })
   })
