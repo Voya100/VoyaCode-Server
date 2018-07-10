@@ -30,7 +30,14 @@ export class CommentsController {
   constructor(private commentsService: CommentsService) {}
 
   static formatCommentResult(comment: CommentEntity): CommentResult {
-    const { id, username, message, postTime, updateTime, isPrivate } = comment;
+    const {
+      id = 0,
+      username,
+      message,
+      postTime,
+      updateTime,
+      isPrivate
+    } = comment;
     return {
       id,
       username: DataFormatter.escapeHtml(username),

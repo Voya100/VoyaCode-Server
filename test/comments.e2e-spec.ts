@@ -164,7 +164,7 @@ describe('CommentsController (e2e)', () => {
       const formattedComment = formattedComments[0];
       let id: number;
       await request(app.getHttpServer())
-        .post('/api/comments')
+        .post('/api/comments/preview')
         .send({ username, message })
         .expect(200)
         .expect((response: Response) => {
