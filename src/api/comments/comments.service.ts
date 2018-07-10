@@ -19,11 +19,13 @@ export class CommentsService {
   ) {}
 
   getComments(includePrivate = false): Promise<CommentEntity[]> {
-    if (includePrivate) {
-      return this.comments.find({ isDeleted: false });
-    } else {
-      return this.comments.find({ isDeleted: false, isPrivate: false });
-    }
+    const isPrivate = includePrivate ? {} : { isPrivate: false };
+    return this.comments.find({
+      where: { isDeleted: false, ...isPrivate },
+      order: {
+        id: 'DESC'
+      }
+    });
   }
 
   async addComment(

@@ -94,7 +94,7 @@ describe('CommentsController (e2e)', () => {
         .get('/api/comments')
         .expect(200)
         .expect((res: Response) => {
-          expect(res.body.data).toMatchObject(comments);
+          expect(res.body.data).toMatchObject([...comments].reverse());
         });
     });
 
@@ -105,7 +105,7 @@ describe('CommentsController (e2e)', () => {
         .set('Authorization', authHeader)
         .expect(200)
         .expect((res: Response) => {
-          expect(res.body.data).toMatchObject(formattedComments);
+          expect(res.body.data).toMatchObject([...formattedComments].reverse());
         });
     });
   });
