@@ -3,6 +3,7 @@ import { DataFormatter } from '@common/helpers/data-formatter';
 import { validateEntity } from '@common/helpers/database-helpers';
 import { CacheService } from '@core/cache/cache.service';
 import { EmailService } from '@core/email/email.service';
+import { PushService } from '@core/push/push.service';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Rss from 'rss';
@@ -14,7 +15,8 @@ export class BlogsService {
     @InjectRepository(BlogEntity)
     private readonly blogs: Repository<BlogEntity>,
     private readonly cache: CacheService,
-    private readonly emailService: EmailService
+    private readonly emailService: EmailService,
+    private readonly pushService: PushService
   ) {}
 
   async getBlogs({ limit }: { limit?: number }) {
@@ -38,7 +40,7 @@ export class BlogsService {
     const blogResult = await this.blogs.save(blog);
     // Reset cache so that it will get refreshed on next request
     this.cache.delete('blog-rss');
-    this.sendBlogNewsletter(blogResult.name, blogResult.id);
+    await this.sendBlogNotifications(blogResult);
     return blogResult;
   }
 
@@ -53,6 +55,11 @@ export class BlogsService {
   async deleteBlog(id: number) {
     const blog = await this.blogs.findOneOrFail(id);
     return await this.blogs.remove(blog);
+  }
+
+  async sendBlogNotifications(blog: BlogEntity) {
+    await this.sendBlogNewsletter(blog.name, blog.id);
+    await this.sendBlogPushNotifications(blog.name, blog.id);
   }
 
   async sendBlogNewsletter(title: string, id: number) {
@@ -76,6 +83,19 @@ export class BlogsService {
       message,
       tags
     );
+  }
+
+  async sendBlogPushNotifications(title: string, id: number) {
+    const subscriptions = await this.pushService.getSubscriptionsByTopic(
+      'blogs'
+    );
+    await this.pushService.sendNotifications(subscriptions, {
+      title,
+      body: 'A new blog has been released: ' + title,
+      data: {
+        id
+      }
+    });
   }
 
   // Returns blogs' rss xml document

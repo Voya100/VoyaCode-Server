@@ -123,9 +123,10 @@ export class PushService {
 
     await Promise.all(
       subscriptions.map(subscription => {
+        const { auth, p256dh } = subscription.keys;
         return this.webPush
           .sendNotification(
-            { endpoint: subscription.endpoint, keys: subscription.keys },
+            { endpoint: subscription.endpoint, keys: { auth, p256dh } },
             JSON.stringify(payload)
           )
           .catch(err => errors.push(err));

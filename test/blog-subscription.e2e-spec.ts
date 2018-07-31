@@ -115,6 +115,8 @@ describe('BlogSubscriptionController (e2e)', () => {
       expect(subscription).not.toBeUndefined();
       expect(subscription.topics.length).toBe(1);
       expect(subscription.topics[0].name).toBe('blogs');
+      expect(subscription.keys.auth).toBe(testSubscription.keys.auth);
+      expect(subscription.keys.p256dh).toBe(testSubscription.keys.p256dh);
     });
 
     // Note: One subscription can be subscribed to 1 or more topics
