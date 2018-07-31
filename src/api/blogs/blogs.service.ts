@@ -60,7 +60,7 @@ export class BlogsService {
     const mailingList = 'blogs@voyacode.com';
     const subject = `Voya Code has released a new blog: ${title}`;
     const message =
-      'Hey,\n\n' +
+      'Hey %recipient%,\n\n' +
       `Voya Code has released a new blog titled "${title}". ` +
       `You can read it here: https://voyacode.com/blogs/${id}\n\n` +
       'If you no longer wish to get these emails, you can unsubscribe here: ' +
