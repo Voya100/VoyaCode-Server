@@ -17,7 +17,7 @@ export class BlogSubscriptionService {
     const decryptedEmail = this.encryptService.urlEncrypt(email);
     const title = 'Confirm subscription to Voya Code newsletter';
     const message =
-      'Hey,\n\n' +
+      'Hey %recipient%,\n\n' +
       "You have chosen to subscribe to Voya Code's blog newsletter. " +
       'By subscribing you will get an email notification every time a new blog is added to Voya Code.\n\n' +
       `Please confirm your subscription by using this link: https://voyacode.com/blogs/subscribe/${decryptedEmail}` +

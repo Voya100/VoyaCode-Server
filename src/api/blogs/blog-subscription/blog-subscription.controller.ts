@@ -1,4 +1,6 @@
 import { BlogSubscriptionService } from '@api/blogs/blog-subscription/blog-subscription.service';
+import { PushSubscriptionDto } from '@core/push/push-subscription.dto';
+import { PushService } from '@core/push/push.service';
 import { Body, Controller, HttpCode, Param, Post } from '@nestjs/common';
 
 import {
@@ -8,7 +10,10 @@ import {
 
 @Controller('api/blogs')
 export class BlogSubscriptionController {
-  constructor(private blogSubscription: BlogSubscriptionService) {}
+  constructor(
+    private blogSubscription: BlogSubscriptionService,
+    private pushService: PushService
+  ) {}
 
   @Post('subscribe')
   @HttpCode(200)
@@ -44,6 +49,34 @@ export class BlogSubscriptionController {
     );
     return {
       message: `Your email address ${unencryptedEmail} has successfully unsubscribed from Voya Code\'s newsletter`
+    };
+  }
+
+  @Post('push/subscribe')
+  @HttpCode(200)
+  async subscribeToPushNotifications(
+    @Body() subscriptionInfo: PushSubscriptionDto
+  ) {
+    const topic = 'blogs';
+    const subscription = await this.pushService.subscribe(subscriptionInfo);
+    await this.pushService.subscribeToTopic(subscription, topic);
+    return {
+      message: 'Push notification subscription successful.'
+    };
+  }
+
+  @Post('push/unsubscribe')
+  @HttpCode(200)
+  async unsubscribeFromPushNotifications(
+    @Body() subscriptionInfo: PushSubscriptionDto
+  ) {
+    const topic = 'blogs';
+    await this.pushService.unsubscribeFromTopic(
+      subscriptionInfo.endpoint,
+      topic
+    );
+    return {
+      message: 'Successfully unsubscribed from blog push notifications.'
     };
   }
 }
