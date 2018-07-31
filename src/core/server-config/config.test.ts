@@ -11,7 +11,8 @@ const database = {
   entities: ['src/**/**.entity{.ts,.js}'],
   // Reset database on each connection
   synchronize: true,
-  dropSchema: true
+  dropSchema: true,
+  logging: ['error']
 };
 
 export const config: ServerConfig = { ...devConfig, database };

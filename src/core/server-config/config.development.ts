@@ -16,9 +16,9 @@ const devConfig = {
     migrations: ['migration/*.ts'],
     migrationsRun: true,
     cli: {
-      migrationsDir: 'migration',
-      subscribersDir: 'subscriber'
-    }
+      migrationsDir: 'migration'
+    },
+    logging: true
   },
   jwt: {
     tokenSecret: '4cdddef5-e507-4499-ad5d-29feff6d25c1',
@@ -37,6 +37,11 @@ const devConfig = {
   mailgun: {
     apiKey: 'fake-key',
     domain: 'voyacode.com'
+  },
+  pushNotifications: {
+    vapidPublicKey:
+      'BBwhwrEOajWSl6QZQwiYIxeOyh0ck8F-vMR_t9PRui6y28o_qb5StvASPJ6WliMns9asM4PvhIbKvja_lR8GAdQ',
+    vapidPrivateKey: 'ME-bLeEbpZun6P8894qku92jH21g9u2WRXBRwacojuw'
   },
   encryptPassword: 'h=H85Z$A<PJd[]Zx?=emj=J_Wa.7"QQ5WFAZ)LQ{MPU'
 };
