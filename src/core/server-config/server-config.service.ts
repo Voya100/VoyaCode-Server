@@ -34,6 +34,10 @@ export class ServerConfigService implements ServerConfig {
       unhashedPassword?: string;
     };
   };
+  pushNotifications: {
+    vapidPublicKey: string;
+    vapidPrivateKey: string;
+  };
   mailgun: { apiKey: string; domain: string };
   encryptPassword: string;
   constructor(environment: string) {

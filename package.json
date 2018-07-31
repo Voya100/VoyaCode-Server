@@ -45,7 +45,8 @@
     "typeorm": "^0.2.7",
     "typescript": "^2.9.2",
     "url-crypt": "^1.2.1",
-    "validator": "^10.4.0"
+    "validator": "^10.4.0",
+    "web-push": "^3.3.2"
   },
   "devDependencies": {
     "@nestjs/testing": "^5.1.0",

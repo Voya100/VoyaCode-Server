@@ -15,7 +15,7 @@ export interface ServerConfig {
     cli?: {
       entitiesDir?: string;
       migrationsDir: string;
-      subscribersDir: string;
+      subscribersDir?: string;
     };
   };
   jwt: {
@@ -35,6 +35,10 @@ export interface ServerConfig {
   mailgun: {
     apiKey: string;
     domain: string;
+  };
+  pushNotifications: {
+    vapidPublicKey: string;
+    vapidPrivateKey: string;
   };
   encryptPassword: string;
 }
