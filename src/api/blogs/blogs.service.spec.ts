@@ -8,7 +8,7 @@ describe('BlogsService', () => {
 
   beforeAll(async () => {
     mockRepository = {} as any;
-    service = new BlogsService(mockRepository, {} as any, {} as any);
+    service = new BlogsService(mockRepository, {} as any, {} as any, {} as any);
   });
 
   it('should be defined', () => {
