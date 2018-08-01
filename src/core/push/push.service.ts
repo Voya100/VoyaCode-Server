@@ -110,20 +110,27 @@ export class PushService {
 
   async sendNotifications(
     subscriptions: PushSubscriptionEntity[],
-    { title, body, data }: { title: string; body: string; data?: any }
+    {
+      title,
+      body,
+      data,
+      actions
+    }: {
+      title: string;
+      body: string;
+      data?: any;
+      actions?: { action: string; title: string }[];
+    }
   ): Promise<string> {
-    // TODO: check payload content
     const payload = {
       notification: {
         title,
         body,
         icon: 'images/favicons/mstile-150x150.png',
         vibrate: [100, 50, 100],
-        renotify: true,
-        requireInteraction: true
-      },
-      data,
-      actions: [{ action: 'goto', title: 'Go to the site' }]
+        data,
+        actions
+      }
     };
 
     const errors: Error[] = [];

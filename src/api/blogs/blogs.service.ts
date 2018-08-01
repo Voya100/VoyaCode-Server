@@ -90,11 +90,12 @@ export class BlogsService {
       'blogs'
     );
     await this.pushService.sendNotifications(subscriptions, {
-      title,
-      body: 'A new blog has been released: ' + title,
+      title: 'New blog on Voya Code',
+      body: 'New blog released: ' + title,
       data: {
-        id
-      }
+        url: `/blogs/${id}`
+      },
+      actions: [{ action: 'navigate', title: 'Check it out' }]
     });
   }
 
