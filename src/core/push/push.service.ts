@@ -89,6 +89,13 @@ export class PushService {
     );
   }
 
+  async getSubscribedTopics(endpoint: string) {
+    const topicEntities = await this.pushSubscriptionTopics.find({
+      subscription: { endpoint }
+    });
+    return topicEntities.map(entity => entity.name);
+  }
+
   async getSubscriptionsByTopic(
     topic: string
   ): Promise<PushSubscriptionEntity[]> {

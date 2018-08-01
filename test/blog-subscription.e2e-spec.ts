@@ -49,6 +49,13 @@ describe('BlogSubscriptionController (e2e)', () => {
     await app.close();
   });
 
+  function expectTopics(endpoint: string, topics: string[]) {
+    return request(app.getHttpServer())
+      .get('/api/push/topic-subscriptions?endpoint=' + endpoint)
+      .expect(200)
+      .expect({ topics });
+  }
+
   describe('POST /api/blogs/subscribe', () => {
     it('should return success message on valid email', () => {
       return request(app.getHttpServer())
@@ -120,8 +127,8 @@ describe('BlogSubscriptionController (e2e)', () => {
     });
 
     // Note: One subscription can be subscribed to 1 or more topics
-    it('should add topic subscription to database even if subscription entity already exists', async () => {
-      const subscription = await pushService.subscribe(testSubscription);
+    it('should add topic subscription to database when subscription entity already exists', async () => {
+      await pushService.subscribe(testSubscription);
       await request(app.getHttpServer())
         .post('/api/blogs/push/subscribe')
         .send(testSubscription)
@@ -129,11 +136,7 @@ describe('BlogSubscriptionController (e2e)', () => {
         .expect({
           message: 'Push notification subscription successful.'
         });
-      const topics = await pushSubscriptionTopicRepository.find({
-        subscription
-      });
-      expect(topics.length).toBe(1);
-      expect(topics[0].name).toBe('blogs');
+      await expectTopics(testSubscription.endpoint, ['blogs']);
     });
   });
 
