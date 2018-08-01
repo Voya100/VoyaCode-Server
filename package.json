@@ -43,7 +43,7 @@
     "rss": "^1.2.2",
     "rxjs": "^6.0.0",
     "typeorm": "^0.2.7",
-    "typescript": "^2.9.2",
+    "typescript": "^3.0.1",
     "url-crypt": "^1.2.1",
     "validator": "^10.4.0",
     "web-push": "^3.3.2"
