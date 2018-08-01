@@ -1,6 +1,7 @@
 node_modules/
 coverage/
 dist/
+.vscode/settings.json
 
 src/core/server-config/config.production.ts
 ormconfig.json
