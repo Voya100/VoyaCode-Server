@@ -59,7 +59,7 @@ describe('BlogSubscriptionController (e2e)', () => {
   describe('POST /api/blogs/subscribe', () => {
     it('should return success message on valid email', () => {
       return request(app.getHttpServer())
-        .post('/api/blogs/subscribe')
+        .post('/api/blogs/email-newsletter/subscribe')
         .send({ email: 'tester@voyacode.com' })
         .expect(200)
         .expect({
@@ -70,7 +70,7 @@ describe('BlogSubscriptionController (e2e)', () => {
 
     it('should return 400 on invalid email', async () => {
       return request(app.getHttpServer())
-        .post('/api/blogs/subscribe')
+        .post('/api/blogs/email-newsletter/subscribe')
         .send({ email: 'not-valid-email' })
         .expect(400);
     });
@@ -80,13 +80,13 @@ describe('BlogSubscriptionController (e2e)', () => {
     it('should return success message on valid email token', () => {
       const emailToken = encryptService.urlEncrypt('tester@voyacode.com');
       return request(app.getHttpServer())
-        .post('/api/blogs/subscribe/' + emailToken)
+        .post('/api/blogs/email-newsletter/subscribe/' + emailToken)
         .expect(200);
     });
 
     it('should return 400 on invalid email token', async () => {
       return request(app.getHttpServer())
-        .post('/api/blogs/subscribe/invalid-token')
+        .post('/api/blogs/email-newsletter/subscribe/invalid-token')
         .expect(400);
     });
   });
@@ -95,13 +95,13 @@ describe('BlogSubscriptionController (e2e)', () => {
     it('should return success message on valid email token', () => {
       const emailToken = encryptService.urlEncrypt('tester@voyacode.com');
       return request(app.getHttpServer())
-        .post('/api/blogs/unsubscribe/' + emailToken)
+        .post('/api/blogs/email-newsletter/unsubscribe/' + emailToken)
         .expect(200);
     });
 
     it('should return 400 on invalid email token', async () => {
       return request(app.getHttpServer())
-        .post('/api/blogs/unsubscribe/invalid-token')
+        .post('/api/blogs/email-newsletter/unsubscribe/invalid-token')
         .expect(400);
     });
   });

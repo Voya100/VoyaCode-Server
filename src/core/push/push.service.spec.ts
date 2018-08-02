@@ -14,7 +14,7 @@ describe('PushService', () => {
       providers: [
         PushService,
         {
-          provide: 'web-push',
+          provide: 'WebPush',
           useValue: {
             setVapidDetails: () => {}
           }
