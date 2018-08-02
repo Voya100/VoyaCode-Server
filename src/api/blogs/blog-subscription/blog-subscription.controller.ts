@@ -15,9 +15,9 @@ export class BlogSubscriptionController {
     private pushService: PushService
   ) {}
 
-  @Post('subscribe')
+  @Post('email-newsletter/subscribe')
   @HttpCode(200)
-  async sendSubscribeConfirmation(@Body()
+  async sendEmailSubscribeConfirmation(@Body()
   {
     email
   }: SendSubscribeConfirmationDto) {
@@ -28,7 +28,7 @@ export class BlogSubscriptionController {
     };
   }
 
-  @Post('subscribe/:email')
+  @Post('email-newsletter/subscribe/:email')
   @HttpCode(200)
   async subscribeToNewsletter(@Param() { email }: EncryptedEmailDto) {
     const unencryptedEmail = await this.blogSubscription.subscribeToNewsletter(
@@ -41,7 +41,7 @@ export class BlogSubscriptionController {
     };
   }
 
-  @Post('unsubscribe/:email')
+  @Post('email-newsletter/unsubscribe/:email')
   @HttpCode(200)
   async unsubscribeFromNewsletter(@Param() { email }: EncryptedEmailDto) {
     const unencryptedEmail = await this.blogSubscription.unsubscribeFromNewsletter(
