@@ -54,5 +54,14 @@ declare module 'web-push' {
     ) => Promise<void>;
   }
 
+  export class WebPushError extends Error {
+    name: string;
+    message: any;
+    statusCode: number;
+    headers: any;
+    body: any;
+    endpoint: string;
+  }
+
   export default WebPush;
 }

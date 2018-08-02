@@ -2,7 +2,7 @@ import { ServerConfigService } from '@core/server-config/server-config.service';
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import WebPush from 'web-push';
+import WebPush, { WebPushError } from 'web-push';
 
 import {
   PushSubscriptionEntity,
@@ -136,15 +136,11 @@ export class PushService {
     const errors: Error[] = [];
 
     await Promise.all(
-      subscriptions.map(subscription => {
-        const { auth, p256dh } = subscription.keys;
-        return this.webPush
-          .sendNotification(
-            { endpoint: subscription.endpoint, keys: { auth, p256dh } },
-            JSON.stringify(payload)
-          )
-          .catch(err => errors.push(err));
-      })
+      subscriptions.map(subscription =>
+        this.sendNotification(subscription, payload).catch(
+          (err: WebPushError) => errors.push(err)
+        )
+      )
     );
     const sentSuccessfully = subscriptions.length - errors.length;
     const message = `${sentSuccessfully}/${
@@ -153,8 +149,34 @@ export class PushService {
     if (errors.length !== 0) {
       // TODO: Better logging mechanism
       console.warn('Push notifications failed', errors);
-      throw new Error(message + ` Errors: \n${JSON.stringify(errors)}`);
+      throw new Error(message + `Push errors: \n${JSON.stringify(errors)}`);
     }
     return message;
+  }
+
+  async sendNotification(
+    subscription: PushSubscriptionEntity,
+    payload: any
+  ): Promise<any> {
+    const { auth, p256dh } = subscription.keys;
+    const endpoint = subscription.endpoint;
+    return this.webPush
+      .sendNotification(
+        { endpoint, keys: { auth, p256dh } },
+        JSON.stringify(payload)
+      )
+      .catch(async (err: WebPushError) => {
+        if (err.statusCode === 410) {
+          // Subscription is cancelled, remove from database
+          console.warn('subscription removed');
+          await this.pushSubscriptionTopics.delete({
+            subscription: { endpoint }
+          });
+          await this.pushSubscriptions.delete({ endpoint });
+        } else {
+          console.warn('subscription error');
+          throw err;
+        }
+      });
   }
 }

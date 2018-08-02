@@ -58,8 +58,16 @@ export class BlogsService {
   }
 
   async sendBlogNotifications(blog: BlogEntity) {
-    await this.sendBlogNewsletter(blog.name, blog.id);
-    await this.sendBlogPushNotifications(blog.name, blog.id);
+    const errors: any[] = [];
+    await this.sendBlogNewsletter(blog.name, blog.id).catch(err =>
+      errors.push(err)
+    );
+    await this.sendBlogPushNotifications(blog.name, blog.id).catch(err =>
+      errors.push(err)
+    );
+    if (errors.length !== 0) {
+      throw new Error(errors.join(' '));
+    }
   }
 
   async sendBlogNewsletter(title: string, id: number) {
