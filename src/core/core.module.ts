@@ -9,6 +9,8 @@ import {
 import { ServerConfigService } from '@core/server-config/server-config.service';
 import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import ExpressBrute from 'express-brute';
+import RedisStore from 'express-brute-redis';
 import mailgunConstructor from 'mailgun-js';
 import NodeCache from 'node-cache';
 import WebPush from 'web-push';
@@ -26,6 +28,11 @@ const mailgun =
   serverConfig.env === 'production'
     ? mailgunConstructor(serverConfig.mailgun)
     : MailgunMock();
+
+const expressBruteStore =
+  serverConfig.env === 'production'
+    ? new RedisStore({ host: '127.0.0.1', port: 6379 })
+    : new ExpressBrute.MemoryStore();
 
 @Global()
 @Module({
@@ -56,8 +63,10 @@ const mailgun =
     {
       provide: 'WebPush',
       useValue: WebPush
-      //provide: 'WebPush',
-      //useValue: {} // WebPush
+    },
+    {
+      provide: 'ExpressBrute.MemoryStore',
+      useValue: expressBruteStore
     },
     PushService
   ],
@@ -66,7 +75,8 @@ const mailgun =
     CacheService,
     EmailService,
     EncryptService,
-    PushService
+    PushService,
+    'ExpressBrute.MemoryStore'
   ]
 })
 export class CoreModule {}

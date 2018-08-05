@@ -7,6 +7,7 @@ import {
   Get,
   HttpCode,
   Post,
+  Request,
   UseGuards
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -17,8 +18,10 @@ export class AuthController {
 
   @Post('login')
   @HttpCode(200)
-  async login(@Body() { username, password }: LoginDto) {
+  async login(@Body() { username, password }: LoginDto, @Request() req: any) {
     const token = await this.auth.login(username, password);
+    // Resets failures for rate limiter
+    req.brute.reset();
     return { token };
   }
 

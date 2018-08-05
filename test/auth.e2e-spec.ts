@@ -1,25 +1,41 @@
 import { ServerConfigService } from '@core/server-config/server-config.service';
 import { INestApplication } from '@nestjs/common';
 import { generateApp } from '@test/helpers/test.utils';
-import { Request } from 'express-serve-static-core';
+import ExpressBrute from 'express-brute';
 import * as jwt from 'jsonwebtoken';
 import request from 'supertest';
+import { Response } from 'supertest';
 
 describe('AuthController (e2e)', () => {
   let app: INestApplication;
   let config: ServerConfigService;
   let adminUser: { username: string; role: string; password: string };
   let adminCredentials: { username: string; password: string };
+  let rateLimiterStore: ExpressBrute.MemoryStore;
+  let rateLimiterSetSpy: jest.SpyInstance;
 
   beforeAll(async () => {
     app = await generateApp();
     config = app.get(ServerConfigService);
+    rateLimiterStore = app.get('ExpressBrute.MemoryStore');
+    rateLimiterSetSpy = jest.spyOn(rateLimiterStore, 'set');
+
     adminUser = config.users['Admin'];
     adminCredentials = {
       username: adminUser.username,
       password: (adminUser as any).unhashedPassword
     };
     await app.init();
+  });
+
+  afterEach(async () => {
+    // Reset limiter store before each test
+    rateLimiterSetSpy.mock.calls.map(async ([key]: string[]) => {
+      await new Promise(resolve => {
+        rateLimiterStore.reset(key, resolve);
+      });
+    });
+    rateLimiterSetSpy.mock.calls = [];
   });
 
   afterAll(async () => {
@@ -33,8 +49,8 @@ describe('AuthController (e2e)', () => {
         .post('/api/auth/login')
         .send(adminCredentials)
         .expect(200)
-        .expect((req: Request) => {
-          token = req.body.token;
+        .expect((res: Response) => {
+          token = res.body.token;
           expect(typeof token).toBe('string');
         });
       // Test the token
@@ -78,6 +94,45 @@ describe('AuthController (e2e)', () => {
       await request(app.getHttpServer())
         .post('/api/auth/login')
         .expect(400);
+    });
+
+    describe('rate limiting', () => {
+      async function loginFailureLoop(username: string, iterations: number) {
+        for (let i = 0; i < iterations; i++) {
+          await request(app.getHttpServer())
+            .post('/api/auth/login')
+            .send({ username, password: 'fake-password' })
+            .expect(401);
+        }
+      }
+
+      it('should return 429 when login fails too many times', async () => {
+        await loginFailureLoop('fake-user-1', 6);
+        await request(app.getHttpServer())
+          .post('/api/auth/login')
+          .send({ username: 'fake-user-1', password: 'fake-password' })
+          .expect(429)
+          .expect((res: Response) => {
+            const expireDate = new Date(res.body.nextValidRequestDate);
+            // Should have roughly 5 minute delay
+            expect(Date.now() + 4.75 * 60 < expireDate.getTime());
+            expect(Date.now() + 5.25 * 60 > expireDate.getTime());
+          });
+      });
+
+      it('should have separate rate limits for different usernames', async () => {
+        await loginFailureLoop('fake-user-2', 5);
+        await loginFailureLoop('fake-user-3', 5);
+      });
+
+      it('should reset rate limit counter on successfull login', async () => {
+        await loginFailureLoop(adminCredentials.username, 5);
+        await request(app.getHttpServer())
+          .post('/api/auth/login')
+          .send(adminCredentials)
+          .expect(200);
+        await loginFailureLoop(adminCredentials.username, 5);
+      });
     });
   });
 
